@@ -1,4 +1,8 @@
-﻿/* Map Store Controller of MorePractice Malody Server. 
+﻿/* Copyright (C) 2021 RhythmCodec
+ * See @RhythmCodec at https://github.com/RhythmCodec
+ *
+ *
+ * Map Store Controller of MorePractice Malody Server. 
  * Make sure turning off the DEBUG mode.
  * 
  * Just provide a valid sid and cid, and the server will 
@@ -219,7 +223,7 @@ namespace MorePracticeMalodyServer.Controllers
                 }
 
                 // Add charts to resp.
-                for (var i = from * maxItem; resp.HasMore ? i != maxItem : i != charts.Count; i++)
+                for (var i = from * maxItem; resp.HasMore ? i != from * maxItem + maxItem : i != charts.Count; i++)
                     resp.Data.Add(new ChartInfo
                     {
                         Cid = charts[i].ChartId,
@@ -426,7 +430,7 @@ namespace MorePracticeMalodyServer.Controllers
         /// <returns></returns>
         [Route("events")]
         [HttpGet]
-        public async Task<Response<EventInfo>> GetEvent(int uid, int api, int active, int from)
+        public async Task<Response<EventInfo>> GetEvents(int uid, int api, int active, int from)
         {
             // If not support the api version, throw a exception.
             if (api != Consts.API_VERSION)
@@ -460,7 +464,7 @@ namespace MorePracticeMalodyServer.Controllers
                 }
 
                 // Write to response.Data
-                for (var i = maxItem * from; resp.HasMore ? i != maxItem : i != result.Count; i++)
+                for (var i = maxItem * from; resp.HasMore ? i != from * maxItem + maxItem : i != result.Count; i++)
                     resp.Data.Add(new EventInfo
                     {
                         Active = result[i].Active,
@@ -483,6 +487,86 @@ namespace MorePracticeMalodyServer.Controllers
             // Also something impossible.
             return resp;
         }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="api"></param>
+        /// <param name="eid"></param>
+        /// <param name="org"></param>
+        /// <param name="from"></param>
+        /// <returns></returns>
+        [Route("event")]
+        [HttpGet]
+        public async Task<Response<EventChartInfo>> GetEvent(int uid, int api, int eid, int org, int from)
+        {
+            // If not support the api version, throw a exception.
+            if (api != Consts.API_VERSION)
+                throw new NotSupportedException($"This server does not support api version {api}.");
+
+            var maxItem = 50; // Max item server will return.
+            var resp = new Response<EventChartInfo>();
+
+            try
+            {
+                // Try to find event with eid.
+                var @event = await context.Events
+                    .FirstAsync(e => e.EventId == eid); // TODO: Save event to cache?
+
+                // success.
+                resp.Code = 0;
+                var charts = @event.EventCharts;
+
+                // See if has more to send?
+                if (charts.Count - from * maxItem > maxItem)
+                {
+                    resp.HasMore = true;
+                    resp.Next = from + 1;
+                }
+                else
+                {
+                    resp.HasMore = false;
+                }
+
+
+                // insert into data[]
+                for (var i = from * maxItem; resp.HasMore ? i != from * maxItem + maxItem : i != charts.Count; i++)
+                {
+                    var song = charts[i].Song;
+                    var chart = charts[i].Chart;
+                    resp.Data.Add(new EventChartInfo
+                    {
+                        Artist = song.Artist,
+                        Cid = chart.ChartId,
+                        Cover = song.Cover,
+                        Creator = chart.Creator,
+                        Length = chart.Length,
+                        Level = chart.Level,
+                        Mode = chart.Mode,
+                        Sid = song.SongId,
+                        Time = GetTimeStamp(song.Time),
+                        Title = org != 0 ? song.OriginalTitle : song.Title,
+                        Type = chart.Type,
+                        Uid = chart.UserId,
+                        Version = chart.Version
+                    });
+                }
+
+                return resp;
+            }
+            catch (InvalidOperationException) // No event found.
+            {
+                logger.LogError("No event with id {eid} found.", eid);
+#if DEBUG
+                throw;
+#else
+                resp.Code = 0;
+                return resp;
+#endif
+            }
+        }
+
+        // TODO: Chart upload controllers.
 
         private long GetTimeStamp()
         {

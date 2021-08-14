@@ -11,6 +11,6 @@ namespace MorePracticeMalodyServer.Model.DbModel
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Cover { get; set; }
-        private List<Chart> EventCharts { get; set; }
+        public List<EventChart> EventCharts { get; set; }
     }
 }

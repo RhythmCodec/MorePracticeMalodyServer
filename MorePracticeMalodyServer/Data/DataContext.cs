@@ -13,5 +13,6 @@ namespace MorePracticeMalodyServer.Data
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Download> Downloads { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<EventChart> EventCharts { get; set; }
     }
 }
