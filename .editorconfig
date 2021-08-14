@@ -1,0 +1,5 @@
+
+[Consts.cs]
+
+# ReSharper properties
+resharper_int_align_fields = true
