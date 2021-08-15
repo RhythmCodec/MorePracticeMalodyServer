@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel
 {
@@ -58,12 +59,15 @@ namespace MorePracticeMalodyServer.Model.DbModel
         ///     Navigation to <see cref="Song" />.
         /// </summary>
         public Song Song { get; set; }
+
+        public List<Download> Downloads { get; set; }
     }
 
     public enum ChartState
     {
         Alpha,
         Beta,
-        Stable
+        Stable,
+        NotUpdated = -1
     }
 }

@@ -29,7 +29,7 @@ namespace MorePracticeMalodyServer
                 switch (Configuration["DataProvider:Provider"].ToLower())
                 {
                     case "sqlite":
-                        option.UseSqlServer(Configuration["DataProvider:ConnectionString"]);
+                        option.UseSqlite(Configuration["DataProvider:ConnectionString"]);
                         break;
                     case "mysql":
                         option.UseMySql(Configuration["DataProvider:ConnectionString"],

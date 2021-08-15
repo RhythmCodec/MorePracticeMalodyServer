@@ -532,7 +532,7 @@ namespace MorePracticeMalodyServer.Controllers
                 // insert into data[]
                 for (var i = from * maxItem; resp.HasMore ? i != from * maxItem + maxItem : i != charts.Count; i++)
                 {
-                    var song = charts[i].Song;
+                    var song = charts[i].Chart.Song;
                     var chart = charts[i].Chart;
                     resp.Data.Add(new EventChartInfo
                     {
@@ -565,8 +565,6 @@ namespace MorePracticeMalodyServer.Controllers
 #endif
             }
         }
-
-        // TODO: Chart upload controllers.
 
         private long GetTimeStamp()
         {

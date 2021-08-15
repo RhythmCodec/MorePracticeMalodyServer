@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel
 {
+    [Index(nameof(Active))]
     public class Event
     {
         public int EventId { get; set; }

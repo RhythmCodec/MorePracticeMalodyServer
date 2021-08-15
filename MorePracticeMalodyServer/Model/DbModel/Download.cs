@@ -7,6 +7,7 @@ namespace MorePracticeMalodyServer.Model.DbModel
     ///     Main data types used for download.
     /// </summary>
     [Index("Chart")]
+    [Index(nameof(Hash), IsUnique = true)]
     public class Download // Unknown types are begin with '¿'.
     {
         /// <summary>
@@ -34,5 +35,7 @@ namespace MorePracticeMalodyServer.Model.DbModel
         ///     Navigation to <see cref="DbModel.Chart" />.
         /// </summary>
         public Chart Chart { get; set; }
+
+        public int ChartId { get; set; }
     }
 }
