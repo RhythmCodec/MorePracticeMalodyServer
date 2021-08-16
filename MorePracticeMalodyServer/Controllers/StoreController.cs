@@ -1,12 +1,20 @@
 ﻿/* Copyright (C) 2021 RhythmCodec
  * See @RhythmCodec at https://github.com/RhythmCodec
- *
- *
- * Map Store Controller of MorePractice Malody Server. 
- * Make sure turning off the DEBUG mode.
  * 
- * Just provide a valid sid and cid, and the server will 
- * return the charts.
+ * Last Update: 2021/08/16
+ * Author: Kami11
+ * Last Modifier: soloopooo
+ * Description:
+ *      
+ *      Map Store Controller of MorePractice Malody Server. 
+ *      Make sure turning off the DEBUG mode.
+ *      Just provide a valid sid and cid, and the server will 
+ *      return the charts.
+ * 
+ * Providing datas:
+ *      
+ *      Promoted charts, sid/cid searching, song charts
+ *
  * Known bugs: 
  * 
  * 
@@ -46,17 +54,17 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
-        ///     Get a list of charts under the specified query conditions.
+        ///     Provide a list of charts under the specified query conditions.
         /// </summary>
-        /// <param name="uid">User id</param>
-        /// <param name="api">Api version</param>
-        /// <param name="word">Search keyword</param>
-        /// <param name="org">Whether to return the original title</param>
-        /// <param name="mode">Returns the chart of the specified mode</param>
-        /// <param name="lvge">Returns the chart whose level is greater than this value</param>
-        /// <param name="lvle">Returns the chart whose level is less than this value</param>
-        /// <param name="beta">Return to non-stable chart</param>
-        /// <param name="from">Paging start</param>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="word">string: Search keyword</param>
+        /// <param name="org">int: Whether to return the original title</param>
+        /// <param name="mode">int: Returns the chart of the specified mode</param>
+        /// <param name="lvge">int: Returns the chart whose level is greater than this value</param>
+        /// <param name="lvle">int: Returns the chart whose level is less than this value</param>
+        /// <param name="beta">int: Return to non-stable chart</param>
+        /// <param name="from">int: Paging start</param>
         /// <returns>A warped json list of song infos.</returns>
         [Route("list")]
         [HttpGet]
@@ -148,13 +156,13 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
-        ///     Get a list of promoted song.
+        ///     Provide a list of promoted song.
         /// </summary>
-        /// <param name="uid">User id</param>
-        /// <param name="api">Api version</param>
-        /// <param name="org">Whether to return the original title</param>
-        /// <param name="mode">Returns the chart of the specified mode</param>
-        /// <param name="from">Paging start</param>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="org">int: Whether to return the original title</param>
+        /// <param name="mode">int: Returns the chart of the specified mode</param>
+        /// <param name="from">int: Paging start</param>
         /// <returns>A warped json list of song infos.</returns>
         [Route("promote")]
         [HttpGet]
@@ -169,14 +177,15 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
+        ///     Provide all charts of a song.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="api"></param>
-        /// <param name="sid"></param>
-        /// <param name="beta"></param>
-        /// <param name="mode"></param>
-        /// <param name="from"></param>
-        /// <returns name="resp"></returns>
+        /// <param name="uid">int:User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="sid">int: Song id</param>
+        /// <param name="beta">int: Whether to return unstable charts</param>
+        /// <param name="mode">int: Return given chart Mode</param>
+        /// <param name="from">int: Paging Start</param>
+        /// <returns name="resp">Response a chart info</returns>
         [Route("charts")]
         [HttpGet]
         public async Task<Response<ChartInfo>> GetChart(int uid, int api, int sid, int beta, int mode, int from)
@@ -251,13 +260,15 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
+        ///     Main method of seaching charts using given sid and cid.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="api"></param>
-        /// <param name="sid"></param>
-        /// <param name="cid"></param>
-        /// <param name="org"></param>
-        /// <returns name="resp"></returns>
+        ///
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="sid">int: Song id</param>
+        /// <param name="cid">int: Chart id</param>
+        /// <param name="org">int: Whether to return original title</param>
+        /// <returns name="resp">Response a song info</returns>
         [Route("query")]
         [HttpGet]
         public async Task<Response<SongInfo>> QuerySong(int uid, int api, int sid = -1, int cid = -1, int org = 0)
@@ -309,7 +320,7 @@ namespace MorePracticeMalodyServer.Controllers
 #endif
                 }
 
-            if (cid != -1)
+            if (cid != -1) // Use chart ID.
                 try
                 {
                     var result = await context.Charts
@@ -334,7 +345,7 @@ namespace MorePracticeMalodyServer.Controllers
 
                     return resp;
                 }
-                catch (InvalidOperationException e)
+                catch (InvalidOperationException e) // None Charts found.
                 {
                     logger.LogError("Could not find a song with cid {cid}", cid);
 #if DEBUG
@@ -352,11 +363,12 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
+        ///     Provide download link of a specified charts.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="api"></param>
-        /// <param name="cid"></param>
-        /// <returns name="resp"></returns>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="cid">int: Chart id</param>
+        /// <returns name="resp">Response a download link</returns>
         [Route("download")]
         [HttpGet]
         public async Task<DownloadResponse> GetDownload(int uid, int api, int cid)
@@ -422,12 +434,13 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
+        ///     Provide all events.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="api"></param>
-        /// <param name="active"></param>
-        /// <param name="from"></param>
-        /// <returns></returns>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="active">int: Return ongoing events</param>
+        /// <param name="from">int: Paging start</param>
+        /// <returns name="resp">return a EventInfo Response</returns>
         [Route("events")]
         [HttpGet]
         public async Task<Response<EventInfo>> GetEvents(int uid, int api, int active, int from)
@@ -479,7 +492,7 @@ namespace MorePracticeMalodyServer.Controllers
             }
             catch (ArgumentNullException) // Something impossible happened.
             {
-                logger.LogError("?");
+                logger.LogError("¿");
                 throw;
                 // I DONT WANT TO WRITE HERE ANY MORE.
             }
@@ -489,13 +502,14 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         /// <summary>
+        ///     Provide all charts under a specific event.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="api"></param>
-        /// <param name="eid"></param>
-        /// <param name="org"></param>
-        /// <param name="from"></param>
-        /// <returns></returns>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="eid">int: Event id</param>
+        /// <param name="org">int: Whether to return the original title</param>
+        /// <param name="from">int: Paging start</param>
+        /// <returns name="resp">Return EventChartInfo Response</returns>
         [Route("event")]
         [HttpGet]
         public async Task<Response<EventChartInfo>> GetEvent(int uid, int api, int eid, int org, int from)
@@ -566,7 +580,7 @@ namespace MorePracticeMalodyServer.Controllers
             }
         }
 
-        private long GetTimeStamp()
+        private long GetTimeStamp() // Get timestamp. 
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = DateTime.Now;
@@ -574,7 +588,7 @@ namespace MorePracticeMalodyServer.Controllers
             return unixTime;
         }
 
-        private long GetTimeStamp(DateTime time)
+        private long GetTimeStamp(DateTime time) // Get specified timestamp.
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = time;
