@@ -11,17 +11,17 @@ namespace MorePracticeMalodyServer.Model.DbModel
     public class Download // Unknown types are begin with '¿'.
     {
         /// <summary>
-        ///     ¿Chart Id.
+        ///     Chart Id.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        ///     ¿Downloading Chart Name.
+        ///     Downloading Chart Name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        ///     Downloading File Hash. Ched to ck integrityity.
+        ///     Downloading File Hash. Used to check integrity.
         /// </summary>
         [MaxLength(32)]
         public string Hash { get; set; }

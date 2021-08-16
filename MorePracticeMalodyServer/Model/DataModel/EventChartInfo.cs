@@ -2,6 +2,9 @@
 
 namespace MorePracticeMalodyServer.Model.DataModel
 {
+    /// <summary>
+    ///     Reference to <see cref="Model.DataModel.ChartInfo" />.
+    /// </summary>
     public class EventChartInfo
     {
         public int Cid { get; set; }

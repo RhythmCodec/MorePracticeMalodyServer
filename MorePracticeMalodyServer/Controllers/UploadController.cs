@@ -1,6 +1,25 @@
 ﻿/* Copyright (C) 2021 RhythmCodec
  * See @RhythmCodec at https://github.com/RhythmCodec
  *
+ * Last Update: 2021/08/16
+ * Author: Kami11
+ * Last Modifier: soloopooo
+ * Description:
+ *      
+ *      The Upload module of server.
+ *      Provides Chart Sign up and charts uploading.
+ *      
+ * Need datas:  
+ *     
+ *      
+ * 
+ * Providing datas: cid, sid
+ *      
+ *      
+ *
+ * Known bugs: 
+ * 
+ * 
  */
 
 using System;
@@ -28,14 +47,23 @@ namespace MorePracticeMalodyServer.Controllers
         /// <summary>
         ///     Init controller.
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="logger"></param>
+        /// <param name="context">DataContext</param>
+        /// <param name="logger">logger</param>
         public UploadController(DataContext context, ILogger<UploadController> logger)
         {
             this.context = context;
             this.logger = logger;
         }
-
+        /// <summary>
+        ///     Upload stage 1: Get sid and cid, upload main info. 
+        /// </summary>
+        /// <param name="uid">int: User id</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="sid">int: Song id. Must have</param>
+        /// <param name="cid">int: Chart id. Must have</param>
+        /// <param name="name">string: File name. Seperated with comma</param>
+        /// <param name="hash">string: File hashs. Seperated with comma</param>
+        /// <returns></returns>
         [Route("sign")]
         [HttpPost]
         public async Task<SignResponse> PostSign(int uid, int api, int sid, int cid, string name, string hash)
@@ -108,5 +136,6 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         // TODO: Chart upload controllers.
+
     }
 }
