@@ -136,11 +136,6 @@ namespace MorePracticeMalodyServer.Controllers
         }
 
         // TODO: Chart upload controllers.
-        [Route("finish")]
-        [HttpPost]
 
-        public async Foo Foo(){
-
-        }
     }
 }
