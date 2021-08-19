@@ -10,6 +10,13 @@
 *.userosscache
 *.sln.docstates
 
+# My tmp folder
+[Tt]emp/
+
+# Sqlite support file
+*.sqlite-shm
+*.sqlite-wal
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

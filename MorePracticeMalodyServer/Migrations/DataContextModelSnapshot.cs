@@ -37,7 +37,7 @@ namespace MorePracticeMalodyServer.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SongId")
+                    b.Property<int>("SongId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Type")
@@ -193,7 +193,9 @@ namespace MorePracticeMalodyServer.Migrations
                 {
                     b.HasOne("MorePracticeMalodyServer.Model.DbModel.Song", "Song")
                         .WithMany("Charts")
-                        .HasForeignKey("SongId");
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Song");
                 });

@@ -23,10 +23,12 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Model;
@@ -41,6 +43,7 @@ namespace MorePracticeMalodyServer.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
+        private readonly IConfiguration configuration;
         private readonly DataContext context;
         private readonly ILogger<UploadController> logger;
 
@@ -49,13 +52,15 @@ namespace MorePracticeMalodyServer.Controllers
         /// </summary>
         /// <param name="context">DataContext</param>
         /// <param name="logger">logger</param>
-        public UploadController(DataContext context, ILogger<UploadController> logger)
+        public UploadController(DataContext context, ILogger<UploadController> logger, IConfiguration configuration)
         {
             this.context = context;
             this.logger = logger;
+            this.configuration = configuration;
         }
+
         /// <summary>
-        ///     Upload stage 1: Get sid and cid, upload main info. 
+        ///     Upload stage 1: Get sid and cid, upload main info.
         /// </summary>
         /// <param name="uid">int: User id</param>
         /// <param name="api">int: Api version</param>
@@ -66,7 +71,8 @@ namespace MorePracticeMalodyServer.Controllers
         /// <returns></returns>
         [Route("sign")]
         [HttpPost]
-        public async Task<SignResponse> PostSign(int uid, int api, int sid, int cid, string name, string hash)
+        public async Task<SignResponse> PostSign(int uid, int api, [FromForm] int sid, [FromForm] int cid,
+            [FromForm] string name, [FromForm] string hash)
         {
             // If not support the api version, throw a exception.
             if (api != Consts.API_VERSION)
@@ -80,6 +86,8 @@ namespace MorePracticeMalodyServer.Controllers
             try
             {
                 song = await context.Songs
+                    .Include(s => s.Charts)
+                    .AsSplitQuery()
                     .FirstAsync(s => s.SongId == sid);
                 logger.LogInformation("Find song {sid} in database.", sid);
             }
@@ -88,15 +96,20 @@ namespace MorePracticeMalodyServer.Controllers
                 // Create song if not found.
                 song = new Song();
                 song.SongId = sid;
+                song.Time = DateTime.Now;
+                context.Songs.Add(song);
                 logger.LogInformation("Song {sid} not found! Created record with id {sid}.", sid, sid);
             }
 
             // To see if this chart is already exist.
-            if (song.Charts.Any(c => c.ChartId == cid))
+            if (song.Charts is not null && song.Charts.Any(c => c.ChartId == cid))
             {
-                // If exists, we may need to update the chart.
-                // If chart is stable, we won't update anyway.
-                // TODO: we will do this later.
+                logger.LogInformation("Chart exists. Trying to update it.");
+                // Now song should be tracked by context.
+
+                // Update chart.
+                // And all we can do is update Time...
+                song.Time = DateTime.Now;
             }
             else
             {
@@ -107,9 +120,11 @@ namespace MorePracticeMalodyServer.Controllers
                     ChartId = cid,
                     UserId = uid,
                     Song = song,
-                    Type = ChartState.NotUpdated
+                    Type = ChartState.NotUploaded
                 };
-                song.Charts.Add(chart);
+                context.Charts.Add(chart);
+
+                await context.SaveChangesAsync();
             }
 
             // We just check if name and hash has the same count.
@@ -126,16 +141,99 @@ namespace MorePracticeMalodyServer.Controllers
 
             // Now we can upload.
             resp.Code = 0;
-            resp.Meta.Add("sid", sid.ToString());
-            resp.Meta.Add("cid", cid.ToString());
-            resp.Meta.Add("hash", hash);
-            resp.Host =
-                $"http://{HttpContext.Connection.LocalIpAddress}:{HttpContext.Connection.LocalPort}/store/upload/upload";
+            resp.ErrorMsg = "";
+            // Malody seems send one file a time.
+            // Each file should have a meta Item, otherwise game will think something wrong.
+            foreach (var h in hashes)
+                resp.Meta.Add(new
+                {
+                    Sid = sid,
+                    Cid = cid,
+                    Hash = h
+                });
+            if (configuration["Storage:Provider"].ToLower() != "self") // Use other storage provider.
+                resp.Host = configuration["Storage:Provider"];
+            else // Use self storage provide.
+                resp.Host =
+                    $"http://{Request.Host.Value}/api/SelfUpload/receive";
 
             return resp;
         }
 
-        // TODO: Chart upload controllers.
+        [HttpPost]
+        [Route("finish")]
+        public async Task<object> FinishCheck(int uid, int api, int sid, int cid, string name, string hash, int size,
+            string main)
+        {
+            var selfProvide = true;
 
+            // Check if chart exist.
+            if (!context.Charts.Any(c => c.ChartId == cid)) return new { Code = -2 };
+
+            // Check if name and hash has the same count.
+            var names = name.Split(',');
+            var hashes = hash.Split(',');
+            if (names.Length != hashes.Length) return new { Code = -1 };
+
+            // Check if self provide mode.
+            if (configuration["Storage:Provide"].ToLower() != "self") selfProvide = false;
+
+            if (selfProvide)
+            {
+                var chart = await context.Charts
+                    .Include(c => c.Downloads)
+                    .FirstAsync(c => c.ChartId == cid);
+
+
+                // Update download links.
+                if (!chart.Downloads.Any())
+                {
+                    for (var i = 0; i != names.Length; i++)
+                        context.Downloads.Add(new Download
+                        {
+                            ChartId = cid,
+                            File = $"http://{Request.Host.Value}/{sid}/{cid}/{names[i]}",
+                            Hash = hashes[i],
+                            Name = names[i]
+                        });
+                }
+                else
+                {
+                    // Map name to hash.
+                    Dictionary<string, string> nameToHash = new();
+                    for (var i = 0; i != names.Length; i++) nameToHash[names[i]] = hashes[i];
+
+                    // Find what's new.
+                    var adds = names.AsEnumerable()
+                        .Except(chart.Downloads.Select(d => d.Name))
+                        .ToList();
+                    foreach (var add in adds)
+                        // Add new files.
+                        context.Downloads.Add(new Download
+                        {
+                            ChartId = cid,
+                            File = $"http://{Request.Host.Value}/{sid}/{cid}/{add}",
+                            Hash = nameToHash[add],
+                            Name = add
+                        });
+
+                    // Find what should delete.
+                    var dels = chart.Downloads.Select(d => d.Name)
+                        .Except(names)
+                        .ToList();
+                    foreach (var del in dels) chart.Downloads.RemoveAll(d => d.Name == del);
+
+                    //Update others.
+                    foreach (var d in chart.Downloads) d.Hash = nameToHash[d.Name];
+                }
+
+                // TODO: Parse mc file.
+                // TODO: Update song info.
+                await context.SaveChangesAsync();
+            }
+
+
+            return new { Code = 0 };
+        }
     }
 }

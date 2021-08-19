@@ -23,26 +23,26 @@ namespace MorePracticeMalodyServer
         {
             services.AddDbContextPool<DataContext>(option =>
             {
-                if (string.IsNullOrWhiteSpace(Configuration["DataProvider:ConnectionString"]))
+                if (string.IsNullOrWhiteSpace(Configuration["Data:ConnectionString"]))
                     throw new ArgumentException(
                         "ConnectionString cannot be null or whitespace! Check your configuration!");
-                switch (Configuration["DataProvider:Provider"].ToLower())
+                switch (Configuration["Data:Provider"].ToLower())
                 {
                     case "sqlite":
-                        option.UseSqlite(Configuration["DataProvider:ConnectionString"]);
+                        option.UseSqlite(Configuration["Data:ConnectionString"]);
                         break;
                     case "mysql":
-                        option.UseMySql(Configuration["DataProvider:ConnectionString"],
-                            new MySqlServerVersion(Configuration["DataProvider:ServerVersion"]));
+                        option.UseMySql(Configuration["Data:ConnectionString"],
+                            new MySqlServerVersion(Configuration["Data:ServerVersion"]));
                         break;
                     case "sqlserver":
-                        option.UseSqlServer(Configuration["DataProvider:ConnectionString"]);
+                        option.UseSqlServer(Configuration["Data:ConnectionString"]);
                         break;
                     default:
                         throw new ArgumentException(
                             "Provider is invalid. Make sure it's one of 'MySql' 'Sqlite' 'SqlServer'!");
                 }
-            }, int.Parse(Configuration["DataProvider:PoolSize"]));
+            }, int.Parse(Configuration["Data:PoolSize"]));
             services.AddMemoryCache();
             services.AddControllers();
         }
@@ -53,6 +53,8 @@ namespace MorePracticeMalodyServer
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
 
 namespace MorePracticeMalodyServer.Model
 {
@@ -8,6 +8,6 @@ namespace MorePracticeMalodyServer.Model
         public int ErrorIndex { get; set; } = -1;
         public string ErrorMsg { get; set; }
         public string Host { get; set; }
-        public ListDictionary Meta { get; set; }
+        public List<object> Meta { get; set; } = new();
     }
 }

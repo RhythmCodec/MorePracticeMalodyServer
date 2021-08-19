@@ -79,6 +79,53 @@ namespace MorePracticeMalodyServer.Controllers
             // Max Items server will return.
             var maxItem = 50;
 
+            if (word is null) // If word is null, Query all songs.
+            {
+                var total = context.Songs.Count();
+                if (total - from * maxItem > maxItem)
+                {
+                    resp.HasMore = true;
+                    resp.Next = from + 1;
+                }
+                else
+                {
+                    resp.HasMore = false;
+                }
+
+                var temp = context.Charts
+                    .AsNoTracking();
+                if (mode != -1) temp = temp.Where(c => c.Mode == mode);
+
+                if (lvge != 0) temp = temp.Where(c => c.Level > lvge);
+
+                if (lvle != 0) temp = temp.Where(c => c.Level < lvle);
+
+                var result = temp
+                    .Select(c => c.Song)
+                    .Distinct()
+                    .OrderBy(s => s.SongId)
+                    .Skip(from * maxItem)
+                    .Take(maxItem)
+                    .ToList(); //TODO: Save to cache.
+
+                resp.Code = 0;
+                // Add song to return value.
+                foreach (var song in result)
+                    resp.Data.Add(new SongInfo
+                    {
+                        Artist = song.Artist,
+                        Bpm = song.Bpm,
+                        Cover = song.Cover,
+                        Length = song.Length,
+                        Mode = song.Mode,
+                        Sid = song.SongId,
+                        Time = GetTimeStamp(song.Time),
+                        Title = org == 0 ? song.Title : song.OriginalTitle
+                    });
+
+                return resp;
+            }
+
             // Try to find data from memory cache first.
             if (cache.TryGetValue(word.ToLower(), out List<Song> cachedSongList))
             {
@@ -262,7 +309,6 @@ namespace MorePracticeMalodyServer.Controllers
         /// <summary>
         ///     Main method of seaching charts using given sid and cid.
         /// </summary>
-        ///
         /// <param name="uid">int: User id</param>
         /// <param name="api">int: Api version</param>
         /// <param name="sid">int: Song id</param>
@@ -584,7 +630,7 @@ namespace MorePracticeMalodyServer.Controllers
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = DateTime.Now;
-            var unixTime = (long) Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            var unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
             return unixTime;
         }
 
@@ -592,7 +638,7 @@ namespace MorePracticeMalodyServer.Controllers
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = time;
-            var unixTime = (long) Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            var unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
             return unixTime;
         }
     }

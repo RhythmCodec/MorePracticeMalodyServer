@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel
@@ -15,7 +16,6 @@ namespace MorePracticeMalodyServer.Model.DbModel
         public int ChartId { get; set; }
 
         /// <summary>
-        ///     .
         ///     AKA Uid
         /// </summary>
         public int UserId { get; set; }
@@ -56,11 +56,22 @@ namespace MorePracticeMalodyServer.Model.DbModel
         public int Mode { get; set; }
 
         /// <summary>
-        ///     Navigation to <see cref="Song" />.
+        ///     Navigation to <see cref="DbModel.Song" />.
         /// </summary>
+        [ForeignKey(nameof(SongId))]
+        [InverseProperty(nameof(DbModel.Song.Charts))]
         public Song Song { get; set; }
 
-        public List<Download> Downloads { get; set; }
+        /// <summary>
+        ///     FK
+        /// </summary>
+        public int SongId { get; set; }
+
+        /// <summary>
+        ///     Navigation to <see cref="Download" />
+        /// </summary>
+        [InverseProperty(nameof(Download.Chart))]
+        public List<Download> Downloads { get; set; } = new();
     }
 
     public enum ChartState
@@ -68,6 +79,6 @@ namespace MorePracticeMalodyServer.Model.DbModel
         Alpha,
         Beta,
         Stable,
-        NotUpdated = -1
+        NotUploaded = -1
     }
 }

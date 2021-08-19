@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel
@@ -60,6 +61,7 @@ namespace MorePracticeMalodyServer.Model.DbModel
         /// <summary>
         ///     Navigation To <see cref="Chart" />.
         /// </summary>
-        public ICollection<Chart> Charts { get; set; }
+        [InverseProperty(nameof(Chart.Song))]
+        public List<Chart> Charts { get; set; } = new();
     }
 }

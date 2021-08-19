@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>37bf4e05-2836-4dd4-b7e4-01b6b356ce73</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <AssemblyVersion>1.0.0.15</AssemblyVersion>
-    <FileVersion>1.0.0.15</FileVersion>
+    <AssemblyVersion>1.0.0.50</AssemblyVersion>
+    <FileVersion>1.0.0.50</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,6 +35,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="temp\**" />
+    <Content Remove="temp\**" />
+    <EmbeddedResource Remove="temp\**" />
+    <None Remove="temp\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\readme.txt" />
+    <Content Remove="wwwroot\Sid here\Cid here\chart file goes here" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Sid here\Cid here\chart file goes here">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.9" />
@@ -44,6 +65,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="data.sqlite">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

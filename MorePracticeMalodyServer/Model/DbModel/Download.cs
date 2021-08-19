@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel
@@ -34,8 +35,13 @@ namespace MorePracticeMalodyServer.Model.DbModel
         /// <summary>
         ///     Navigation to <see cref="DbModel.Chart" />.
         /// </summary>
+        [ForeignKey(nameof(ChartId))]
+        [InverseProperty(nameof(DbModel.Chart.Downloads))]
         public Chart Chart { get; set; }
 
+        /// <summary>
+        ///     FK
+        /// </summary>
         public int ChartId { get; set; }
     }
 }
