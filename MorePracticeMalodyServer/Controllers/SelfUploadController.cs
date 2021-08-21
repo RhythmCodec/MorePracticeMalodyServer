@@ -1,4 +1,23 @@
-﻿using System;
+﻿/* Copyright (C) 2021 RhythmCodec
+ * See @RhythmCodec at https://github.com/RhythmCodec
+ * 
+ * Last Update: 2021/08/22
+ * Author: Kami11
+ * Last Modifier: kami11
+ * Description:
+ *      
+ *      
+ * 
+ * Providing datas:
+ *      
+ *     
+ *
+ * Known bugs: 
+ * 
+ *      
+ */
+
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -40,9 +59,8 @@ namespace MorePracticeMalodyServer.Controllers
                     var md5byte = await md5.ComputeHashAsync(decompressed);
                     checksum = BitConverter.ToString(md5byte).Replace("-", "").ToLower();
                 }
-                else
+                else // check other files directly.
                 {
-                    // Check directly.
                     var md5byte = await md5.ComputeHashAsync(formFile.OpenReadStream());
                     checksum = BitConverter.ToString(md5byte).Replace("-", "").ToLower();
                 }

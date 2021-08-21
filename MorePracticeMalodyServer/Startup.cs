@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,10 @@ namespace MorePracticeMalodyServer
         {
             services.AddDbContextPool<DataContext>(option =>
             {
+#if DEBUG
+                option.LogTo(Console.WriteLine)
+                    .EnableSensitiveDataLogging();
+#endif
                 if (string.IsNullOrWhiteSpace(Configuration["Data:ConnectionString"]))
                     throw new ArgumentException(
                         "ConnectionString cannot be null or whitespace! Check your configuration!");
@@ -54,7 +59,13 @@ namespace MorePracticeMalodyServer
 
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            // Support .mc file download.
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings[".mc"] = "application/octet-stream";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
 
             app.UseRouting();
 

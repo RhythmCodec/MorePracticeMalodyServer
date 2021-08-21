@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>37bf4e05-2836-4dd4-b7e4-01b6b356ce73</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <AssemblyVersion>1.0.0.50</AssemblyVersion>
-    <FileVersion>1.0.0.50</FileVersion>
+    <AssemblyVersion>1.0.0.66</AssemblyVersion>
+    <FileVersion>1.0.0.66</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,6 +44,10 @@
   <ItemGroup>
     <Content Remove="wwwroot\readme.txt" />
     <Content Remove="wwwroot\Sid here\Cid here\chart file goes here" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Model\FileModel\McFile.cs" />
   </ItemGroup>
 
   <ItemGroup>

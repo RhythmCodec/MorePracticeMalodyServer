@@ -1,9 +1,9 @@
 ﻿/* Copyright (C) 2021 RhythmCodec
  * See @RhythmCodec at https://github.com/RhythmCodec
  * 
- * Last Update: 2021/08/16
+ * Last Update: 2021/08/22
  * Author: Kami11
- * Last Modifier: soloopooo
+ * Last Modifier: kami11
  * Description:
  *      
  *      Map Store Controller of MorePractice Malody Server. 
@@ -17,7 +17,9 @@
  *
  * Known bugs: 
  * 
- * 
+ *      When search keyword at start of Title, nothing returns.
+ *      This is caused by EF core sql generate.
+ *      This only tested using sqlite.
  */
 
 using System;
@@ -135,7 +137,8 @@ namespace MorePracticeMalodyServer.Controllers
                 var result = context.Songs
                     .Where(s => s.Title.Contains(word.ToLower()) || s.OriginalTitle.Contains(word.ToLower()))
                     .AsNoTracking()
-                    .ToList();
+                    .ToList(); //BUG: This always return a empty list. Why?
+                // This is a bug of ef core :(
 
                 // Create new cache entry. Set value abd expiration.
                 var cacheEntry = cache.CreateEntry(word);
@@ -249,6 +252,7 @@ namespace MorePracticeMalodyServer.Controllers
             try
             {
                 var result = await context.Songs
+                    .Include(s => s.Charts)
                     .AsNoTracking()
                     .FirstAsync(s => s.SongId == sid);
                 // Success
@@ -370,6 +374,7 @@ namespace MorePracticeMalodyServer.Controllers
                 try
                 {
                     var result = await context.Charts
+                        .Include(c => c.Song)
                         .AsNoTracking()
                         .FirstAsync(c => c.ChartId == cid);
 
@@ -430,6 +435,7 @@ namespace MorePracticeMalodyServer.Controllers
             try
             {
                 chart = await context.Charts
+                    .Include(c => c.Song)
                     .AsNoTracking()
                     .FirstAsync(c => c.ChartId == cid);
             }
@@ -445,7 +451,7 @@ namespace MorePracticeMalodyServer.Controllers
             try
             {
                 var dls = context.Downloads
-                    .Where(d => d.Chart == chart)
+                    .Include(d => d.Chart.Song)
                     .AsNoTracking()
                     .ToList();
 
@@ -630,15 +636,16 @@ namespace MorePracticeMalodyServer.Controllers
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = DateTime.Now;
-            var unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            var unixTime = (long)Math.Round((nowTime - startTime).TotalSeconds, MidpointRounding.AwayFromZero);
             return unixTime;
         }
 
+        // We only need 10 digits timestamp
         private long GetTimeStamp(DateTime time) // Get specified timestamp.
         {
             var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
             var nowTime = time;
-            var unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            var unixTime = (long)Math.Round((nowTime - startTime).TotalSeconds, MidpointRounding.AwayFromZero);
             return unixTime;
         }
     }

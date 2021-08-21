@@ -1,9 +1,9 @@
 ﻿/* Copyright (C) 2021 RhythmCodec
  * See @RhythmCodec at https://github.com/RhythmCodec
  *
- * Last Update: 2021/08/16
+ * Last Update: 2021/08/21
  * Author: Kami11
- * Last Modifier: soloopooo
+ * Last Modifier: kami11
  * Description:
  *      
  *      The Upload module of server.
@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Model;
 using MorePracticeMalodyServer.Model.DbModel;
+using MorePracticeMalodyServer.Model.FileModel;
 
 namespace MorePracticeMalodyServer.Controllers
 {
@@ -151,7 +153,7 @@ namespace MorePracticeMalodyServer.Controllers
                     Cid = cid,
                     Hash = h
                 });
-            if (configuration["Storage:Provider"].ToLower() != "self") // Use other storage provider.
+            if (configuration["Storage:Provider"]?.ToLower() != "self") // Use other storage provider.
                 resp.Host = configuration["Storage:Provider"];
             else // Use self storage provide.
                 resp.Host =
@@ -162,8 +164,9 @@ namespace MorePracticeMalodyServer.Controllers
 
         [HttpPost]
         [Route("finish")]
-        public async Task<object> FinishCheck(int uid, int api, int sid, int cid, string name, string hash, int size,
-            string main)
+        public async Task<object> FinishCheck(int uid, int api, [FromForm] int sid, [FromForm] int cid,
+            [FromForm] string name, [FromForm] string hash, [FromForm] int size,
+            [FromForm] string main)
         {
             var selfProvide = true;
 
@@ -176,7 +179,7 @@ namespace MorePracticeMalodyServer.Controllers
             if (names.Length != hashes.Length) return new { Code = -1 };
 
             // Check if self provide mode.
-            if (configuration["Storage:Provide"].ToLower() != "self") selfProvide = false;
+            if (configuration["Storage:Provider"]?.ToLower() != "self") selfProvide = false;
 
             if (selfProvide)
             {
@@ -227,9 +230,55 @@ namespace MorePracticeMalodyServer.Controllers
                     foreach (var d in chart.Downloads) d.Hash = nameToHash[d.Name];
                 }
 
-                // TODO: Parse mc file.
-                // TODO: Update song info.
                 await context.SaveChangesAsync();
+            }
+
+            // Parse mc file and update info.
+            if (selfProvide)
+            {
+                // Map hash to name.
+                Dictionary<string, string> hashToName = new();
+                for (var i = 0; i != names.Length; i++) hashToName[hashes[i]] = names[i];
+
+                try
+                {
+                    // Open file.
+                    var file = await Task.Run(() => McFile.ParseLocalFile(Path.Combine(Environment.CurrentDirectory,
+                        "wwwroot",
+                        sid.ToString(), cid.ToString(),
+                        hashToName[main]), hashToName[main]));
+
+                    var chartMeta = file.Meta;
+                    var songMeta = file.Meta.Song;
+
+                    var chart = await context.Charts
+                        .Include(c => c.Song)
+                        .FirstAsync(c => c.ChartId == cid);
+
+                    // Update our db.
+                    chart.Creator = chartMeta.Creator;
+                    chart.Length = 0; //TODO: find a way to know how long the song?
+                    chart.Level = 0; // This doesn't matter..Maybe //TODO: find a way to kown the difficulty.
+                    chart.Mode = chartMeta.Mode;
+                    chart.Size = size;
+                    chart.Type = chartMeta.Preview == 0 ? ChartState.Stable : ChartState.Beta;
+                    chart.UserId = uid;
+                    chart.Version = chartMeta.Version;
+                    chart.Song.Artist = songMeta.Artist;
+                    chart.Song.Bpm = songMeta.Bpm;
+                    chart.Song.Cover = $"http://{Request.Host.Value}/{sid}/{cid}/{chartMeta.Background}";
+                    chart.Song.Length = 0; // See above.
+                    chart.Song.Mode |= 1 << chartMeta.Mode;
+                    chart.Song.OriginalTitle = songMeta.Titleorg ?? songMeta.Title;
+                    chart.Song.Title = songMeta.Title;
+
+                    await context.SaveChangesAsync();
+                }
+                catch (FileNotFoundException) // WHY??
+                {
+                    logger.LogError("No chart file {name} found in file system.", hashToName[main]);
+                    return new { Code = -2 };
+                }
             }
 
 
