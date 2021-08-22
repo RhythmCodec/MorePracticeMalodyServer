@@ -37,7 +37,7 @@ namespace MorePracticeMalodyServer.Model.FileModel
             return JsonSerializer.Deserialize<McFile>(buffer.AsSpan()[3..len],new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
-            }); // Remove utf bom EF BB BF byte.
+            }); // Remove utf bom EF BB BF head.
         }
     }
 
