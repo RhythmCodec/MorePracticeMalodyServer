@@ -3,18 +3,20 @@
  * 
  * Last Update: 2021/08/22
  * Author: Kami11
- * Last Modifier: kami11
+ * Last Modifier: soloopooo
  * Description:
  *      
- *      
+ *      Upload Controller used by LOCAL(Server based) server
  * 
  * Providing datas:
  *      
+ *      None.
  *     
  *
  * Known bugs: 
  * 
- *      
+ *      --commented by soloopooo: Can we use json to configure the upload directory? 
+ *      Not only wwwroot but also other folders.
  */
 
 using System;
@@ -69,6 +71,7 @@ namespace MorePracticeMalodyServer.Controllers
                     return Conflict(); // Just give some error to stop upload.
 
                 // Write file to our local filesystem.
+                // -- commented by soloopooo: Warning: there may be bugs if formfile.Filename contains special things.
                 await using var fs = System.IO.File.Open(
                     Path.Combine(Environment.CurrentDirectory, "wwwroot", sid.ToString(), cid.ToString(),
                         formFile.FileName),
