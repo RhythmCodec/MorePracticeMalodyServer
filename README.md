@@ -13,6 +13,7 @@ State:
 </a>
 </div>
 </p>
+
 ## Basic
 
 API version：**202103**  
@@ -60,10 +61,10 @@ You can install it in two ways: **binary** or **compile from source code**.
  
 **Compile from Source Code：**  
 1. Clone or download MorePracticeMalodyServer repo.
-2. Make sure you have installed .NET 5 SDK。You can [download from here](https://dotnet.microsoft.com/download/dotnet/5.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 5 SDK.
+2. Make sure you have installed .NET 5 SDK. You can [download from here](https://dotnet.microsoft.com/download/dotnet/5.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 5 SDK.
 3. Run `dotnet restore`.
 4. Uses sqlite as database and local filesystem as storage by default. If using other providers, please refer to [Modifying the profile](#Modifying the profile).
-5. As the database provider changing, Please delete ALL THINGS under MorePracticeMalodyServer\Migrations, then run `dotnet ef migrations add InitialCreate` and `dotnet ef database update` to update it. For release database, `dotnet ef migrations script --idempotent` is promoted, while generates the SQL script to construct the data table.
+5. As the database provider changing, Please delete ALL THINGS under MorePracticeMalodyServer\Migrations, then run `dotnet ef migrations add InitialCreate` and `dotnet ef database update` to update it. For production environment databases, `dotnet ef migrations script --idempotent` is promoted, while generates the SQL script to construct the data table.
 6. Run `dotnet build --configuration Release --no-restore` to build.
 7. Copy bulit files at MorePracticeMalodyServer\bin\Release. 
 
@@ -93,7 +94,7 @@ Now only sqlite is tested, as a result, other providers may behave unpredictably
 
 **This is now under construction!**  
 Please set Storage:Provider as the upload interface for your file provider.
-Callback the server with the file link after the upload is complete.(**This loopback is under construction**)  
+Callback the server with the file link after the upload is complete.(**This callback is under construction**)  
 Games use application/x-www-form-urlencoded to send file. Only one file with meta info is sent at a time.
 meta info is text key-value. We provides the cid, sid and hash. It can be retrieved in the form.
 As the files are saved on your storage provider, the server won't try to download your files to analyze. You need to parse the metadata of chart files | *.mc.
