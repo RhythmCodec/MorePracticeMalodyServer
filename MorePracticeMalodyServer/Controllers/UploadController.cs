@@ -1,25 +1,25 @@
 ﻿/* Copyright (C) 2021 RhythmCodec
  * See @RhythmCodec at https://github.com/RhythmCodec
  *
- * Last Update: 2021/08/21
+ * Last Update: 2021/08/22
  * Author: Kami11
- * Last Modifier: kami11
+ * Last Modifier: soloopooo
  * Description:
  *      
  *      The Upload module of server.
  *      Provides Chart Sign up and charts uploading.
  *      
- * Need datas:  
+ * Need datas: 
  *     
- *      
+ *      Hmm. looks like just your File...
  * 
- * Providing datas: cid, sid
+ * Providing datas: cid, sid, Response Code
  *      
  *      
  *
  * Known bugs: 
- * 
- * 
+ *      
+ *      TODO: get the length of song file.
  */
 
 using System;
@@ -161,7 +161,18 @@ namespace MorePracticeMalodyServer.Controllers
 
             return resp;
         }
-
+        /// <summary>
+        ///     Upload Stage 3: Finish stage.
+        /// </summary>
+        /// <param name="uid">int: user id. Must have</param>
+        /// <param name="api">int: Api version</param>
+        /// <param name="sid">int: song id. Must have</param>
+        /// <param name="cid">int: chart id. Must have</param>
+        /// <param name="name">string: The Filename of all files. Seperated with comma</param>
+        /// <param name="hash">string: hashs(md5) of files. Seperated with comma</param>
+        /// <param name="size">int: File size in total</param>
+        /// <param name="main">string: the CHART's md5</param>
+        /// <returns>Response Code</returns>
         [HttpPost]
         [Route("finish")]
         public async Task<object> FinishCheck(int uid, int api, [FromForm] int sid, [FromForm] int cid,
@@ -257,7 +268,8 @@ namespace MorePracticeMalodyServer.Controllers
 
                     // Update our db.
                     chart.Creator = chartMeta.Creator;
-                    chart.Length = 0; //TODO: find a way to know how long the song?
+                    chart.Length = 0; //TODO: find a way to know how long the song? 
+                    // -- commented by soloopooo: use ffmpeg(ffmpeg -i path/to/example.mp3) or using C# modules: see https://blog.csdn.net/u013419838/article/details/108489023
                     chart.Level = 0; // This doesn't matter..Maybe //TODO: find a way to kown the difficulty.
                     chart.Mode = chartMeta.Mode;
                     chart.Size = size;
