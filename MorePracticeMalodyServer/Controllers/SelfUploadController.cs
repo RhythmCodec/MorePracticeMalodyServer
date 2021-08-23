@@ -24,6 +24,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MorePracticeMalodyServer.Controllers
@@ -71,10 +72,10 @@ namespace MorePracticeMalodyServer.Controllers
                     return Conflict(); // Just give some error to stop upload.
 
                 // Write file to our local filesystem.
-                // -- commented by soloopooo: Warning: there may be bugs if formfile.Filename contains special characters.
                 await using var fs = System.IO.File.Open(
                     Path.Combine(Environment.CurrentDirectory, "wwwroot", sid.ToString(), cid.ToString(),
-                        formFile.FileName),
+                        // FIX issue #1, encode our file name, make it safe to http and filesystem.
+                        HttpUtility.UrlEncode(formFile.FileName)),
                     FileMode.Create);
                 await formFile.CopyToAsync(fs);
             }

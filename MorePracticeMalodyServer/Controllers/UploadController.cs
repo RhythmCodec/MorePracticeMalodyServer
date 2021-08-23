@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -161,6 +162,7 @@ namespace MorePracticeMalodyServer.Controllers
 
             return resp;
         }
+
         /// <summary>
         ///     Upload Stage 3: Finish stage.
         /// </summary>
@@ -206,9 +208,10 @@ namespace MorePracticeMalodyServer.Controllers
                         context.Downloads.Add(new Download
                         {
                             ChartId = cid,
-                            File = $"http://{Request.Host.Value}/{sid}/{cid}/{names[i]}",
+                            File =
+                                $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(names[i])}", // Fix issue #1
                             Hash = hashes[i],
-                            Name = names[i]
+                            Name = HttpUtility.UrlEncode(names[i])
                         });
                 }
                 else
@@ -219,23 +222,25 @@ namespace MorePracticeMalodyServer.Controllers
 
                     // Find what's new.
                     var adds = names.AsEnumerable()
-                        .Except(chart.Downloads.Select(d => d.Name))
+                        .Except(chart.Downloads.Select(d => HttpUtility.UrlDecode(d.Name))) // Fix issue #1
                         .ToList();
                     foreach (var add in adds)
                         // Add new files.
                         context.Downloads.Add(new Download
                         {
                             ChartId = cid,
-                            File = $"http://{Request.Host.Value}/{sid}/{cid}/{add}",
+                            File =
+                                $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(add)}", // Fix issue #1
                             Hash = nameToHash[add],
-                            Name = add
+                            Name = HttpUtility.UrlEncode(add)
                         });
 
                     // Find what should delete.
-                    var dels = chart.Downloads.Select(d => d.Name)
+                    var dels = chart.Downloads.Select(d => HttpUtility.UrlDecode(d.Name)) // Fix issue #1
                         .Except(names)
                         .ToList();
-                    foreach (var del in dels) chart.Downloads.RemoveAll(d => d.Name == del);
+                    foreach (var del in dels)
+                        chart.Downloads.RemoveAll(d => d.Name == HttpUtility.UrlEncode(del)); // Fix issue #1
 
                     //Update others.
                     foreach (var d in chart.Downloads) d.Hash = nameToHash[d.Name];
@@ -255,9 +260,10 @@ namespace MorePracticeMalodyServer.Controllers
                 {
                     // Open file.
                     var file = await Task.Run(() => McFile.ParseLocalFile(Path.Combine(Environment.CurrentDirectory,
-                        "wwwroot",
-                        sid.ToString(), cid.ToString(),
-                        hashToName[main]), hashToName[main]));
+                            "wwwroot",
+                            sid.ToString(), cid.ToString(),
+                            HttpUtility.UrlEncode(hashToName[main])),
+                        HttpUtility.UrlEncode(hashToName[main]))); // Fix issue #1
 
                     var chartMeta = file.Meta;
                     var songMeta = file.Meta.Song;
@@ -278,7 +284,8 @@ namespace MorePracticeMalodyServer.Controllers
                     chart.Version = chartMeta.Version;
                     chart.Song.Artist = songMeta.Artist;
                     chart.Song.Bpm = songMeta.Bpm;
-                    chart.Song.Cover = $"http://{Request.Host.Value}/{sid}/{cid}/{chartMeta.Background}";
+                    chart.Song.Cover =
+                        $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(chartMeta.Background)}"; // Fix issue #1
                     chart.Song.Length = 0; // See above.
                     chart.Song.Mode |= 1 << chartMeta.Mode;
                     chart.Song.OriginalTitle = songMeta.Titleorg ?? songMeta.Title;
@@ -288,7 +295,8 @@ namespace MorePracticeMalodyServer.Controllers
                 }
                 catch (FileNotFoundException) // WHY??
                 {
-                    logger.LogError("No chart file {name} found in file system.", hashToName[main]);
+                    logger.LogError("No chart file {name} found in file system.",
+                        HttpUtility.UrlEncode(hashToName[main]));
                     return new { Code = -2 };
                 }
             }
