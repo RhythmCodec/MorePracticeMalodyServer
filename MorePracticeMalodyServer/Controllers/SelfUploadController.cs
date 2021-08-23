@@ -15,8 +15,8 @@
  *
  * Known bugs: 
  * 
- *      --commented by soloopooo: Can we use json to configure the upload directory? 
- *      Not only wwwroot but also other folders.
+ *      
+ *      
  */
 
 using System;

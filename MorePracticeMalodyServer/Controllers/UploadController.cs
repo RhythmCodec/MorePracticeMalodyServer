@@ -271,7 +271,6 @@ namespace MorePracticeMalodyServer.Controllers
                     chart.Length = 0; //TODO: find a way to know how long the song? 
                     // -- commented by soloopooo: use ffmpeg(ffmpeg -i path/to/example.mp3) or using C# modules: see https://blog.csdn.net/u013419838/article/details/108489023
                     chart.Level = 0; // This doesn't matter..Maybe //TODO: find a way to kown the difficulty.
-                    // -- commented by soloopooo: unzip mc file and read the first bytes of beatmaps?
                     chart.Mode = chartMeta.Mode;
                     chart.Size = size;
                     chart.Type = chartMeta.Preview == 0 ? ChartState.Stable : ChartState.Beta;
