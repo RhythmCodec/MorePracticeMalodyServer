@@ -2,8 +2,6 @@ name: Make Release
 
 on:
   push:
-    branches: 
-      - master
     tags: 
       - v*.*.*
   
@@ -58,7 +56,7 @@ jobs:
           linux-arm.tar.gz
           linux-arm64-without-runtime.tar.gz
           linux-arm64.tar.gz
-        token: ${{ GITHUB.RELEASE_TOKEN }}
+        token: ${{ secrets.RELEASE_TOKEN }}
         
         
         
@@ -130,4 +128,4 @@ jobs:
           win10-x64.7z
           win10-x86-without-runtime.7z
           win10-x86.7z
-        token: ${{ GITHUB.RELEASE_TOKEN }}
+        token: ${{ secrets.RELEASE_TOKEN }}
