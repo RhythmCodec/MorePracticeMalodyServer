@@ -18,7 +18,7 @@ State:
 
 API version：**202103**  
 Application version：**1.0.0**
-Run time：**ASP.NET Core**
+Runtime：**ASP.NET Core**
 
 An open-source Malody V Chart Server. ~Can be run on low loads, but surely booms at high loads.~
 You can use it as you download, no need configuration, and it can run the server using sqlite and local file system.
