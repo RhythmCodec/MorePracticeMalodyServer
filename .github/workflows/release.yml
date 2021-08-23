@@ -112,9 +112,9 @@ jobs:
     - name: Pack Win10-x64
       run: 7z a win10-x64.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-x64\
     - name: Pack Win10-arm64-without-runtime
-      run: 7z a win10-x86-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64-without-runtime\
+      run: 7z a win10-arm64-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64-without-runtime\
     - name: Pack Win10-arm64
-      run: 7z a win10-x86.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64\
+      run: 7z a win10-arm64.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64\
           
     - name: Upload release files
       uses: softprops/action-gh-release@v1
@@ -126,6 +126,6 @@ jobs:
           win-x86.7z
           win10-x64-without-runtime.7z
           win10-x64.7z
-          win10-x86-without-runtime.7z
-          win10-x86.7z
+          win10-arm64-without-runtime.7z
+          win10-arm64.7z
         token: ${{ secrets.RELEASE_TOKEN }}
