@@ -78,7 +78,7 @@ Profile: appsettings.json. The following are the structure and modify ways:
     * Microsoft.Hosting.Lifetime
   * Data : setup databases
     * Provider : Database provider, you can set to `sqlserver`,`mysql`,`sqlite`. sqlite is default.
-    * PoolSize : The maximum number of connections by the pool.
+    * PoolSize : The maximum connection number of connection pool.
     * ConnectionString : Strings of connection. Refer to databases' documentation.
     * ServerVersion : Used by MySql, define version.
   * Storage : setup storage
