@@ -71,7 +71,7 @@ namespace MorePracticeMalodyServer.Controllers
                     return Conflict(); // Just give some error to stop upload.
 
                 // Write file to our local filesystem.
-                // -- commented by soloopooo: Warning: there may be bugs if formfile.Filename contains special things.
+                // -- commented by soloopooo: Warning: there may be bugs if formfile.Filename contains special characters.
                 await using var fs = System.IO.File.Open(
                     Path.Combine(Environment.CurrentDirectory, "wwwroot", sid.ToString(), cid.ToString(),
                         formFile.FileName),
