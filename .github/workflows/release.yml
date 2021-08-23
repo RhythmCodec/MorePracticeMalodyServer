@@ -98,25 +98,25 @@ jobs:
       run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win10-arm64 --framework net5.0 -o ./build/win10-arm64
     
     - name: Pack Win-x64-without-runtime
-      run: 7z a win-x64-without-runtime.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-x64-without-runtime/
+      run: 7z a win-x64-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-x64-without-runtime\
     - name: Pack Win-x64
-      run: 7z a win-x64.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-x64/
+      run: 7z a win-x64.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-x64\
     - name: Pack Win-x86-without-runtime
-      run: 7z a win-x86-without-runtime.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-x86-without-runtime/
+      run: 7z a win-x86-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-x86-without-runtime\
     - name: Pack Win-x86
-      run: 7z a win-x86.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-x86/
+      run: 7z a win-x86.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-x86\
     - name: Pack Win-arm-without-runtime
-      run: 7z a win-arm-without-runtime.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-arm-without-runtime/
+      run: 7z a win-arm-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-arm-without-runtime\
     - name: Pack Win-arm
-      run: 7z a win-arm.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win-arm/
+      run: 7z a win-arm.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-arm\
     - name: Pack Win10-x64-without-runtime
-      run: 7z a win10-x64-without-runtime.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win10-x64-without-runtime/
+      run: 7z a win10-x64-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-x64-without-runtime\
     - name: Pack Win10-x64
-      run: 7z a win10-x64.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win10-x64/
+      run: 7z a win10-x64.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-x64\
     - name: Pack Win10-x86-without-runtime
-      run: 7z a win10-x86-without-runtime.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win10-x86-without-runtime/
+      run: 7z a win10-x86-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-x86-without-runtime\
     - name: Pack Win10-x86
-      run: 7z a win10-x86.7z ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build/win10-x86/
+      run: 7z a win10-x86.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-x86\
           
     - name: Upload release files
       uses: softprops/action-gh-release@v1
