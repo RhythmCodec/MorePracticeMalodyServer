@@ -222,8 +222,45 @@ namespace MorePracticeMalodyServer.Controllers
             if (api != Consts.API_VERSION)
                 throw new NotSupportedException($"This server not support api version {api}.");
 
-            //TODO
-            return new Response<SongInfo>();
+            var resp = new Response<SongInfo>();
+            var maxCount = 50;
+
+            // Query promotes from database.
+            var result = await context.Promotions
+                .Include(p => p.Song)
+                .AsNoTracking()
+                .ToListAsync(); // TODO: Cache result?
+
+            resp.Code = 0;
+            // To see if has more.
+            if (result.Count - maxCount * from > maxCount)
+            {
+                resp.HasMore = true;
+                resp.Next = from + 1;
+            }
+            else
+            {
+                resp.HasMore = false;
+            }
+
+            // Insert to Data
+            for (var i = from * maxCount; resp.HasMore ? i != from * maxCount + maxCount : i != result.Count; i++)
+            {
+                var song = result[i].Song;
+                resp.Data.Add(new SongInfo
+                {
+                    Artist = song.Artist,
+                    Bpm = song.Bpm,
+                    Cover = song.Cover,
+                    Length = song.Length,
+                    Mode = song.Mode,
+                    Sid = song.SongId,
+                    Time = GetTimeStamp(song.Time),
+                    Title = org == 0 ? song.Title : song.OriginalTitle
+                });
+            }
+
+            return resp;
         }
 
         /// <summary>
