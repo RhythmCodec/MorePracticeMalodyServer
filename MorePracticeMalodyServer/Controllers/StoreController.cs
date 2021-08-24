@@ -102,13 +102,13 @@ namespace MorePracticeMalodyServer.Controllers
 
                 if (lvle != 0) temp = temp.Where(c => c.Level < lvle);
 
-                var result = temp
+                var result = await temp
                     .Select(c => c.Song)
                     .Distinct()
                     .OrderBy(s => s.SongId)
                     .Skip(from * maxItem)
                     .Take(maxItem)
-                    .ToList(); //TODO: Save to cache.
+                    .ToListAsync(); //TODO: Save to cache.
 
                 resp.Code = 0;
                 // Add song to return value.
@@ -134,10 +134,10 @@ namespace MorePracticeMalodyServer.Controllers
             }
             else // Query db and write result to cache
             {
-                var result = context.Songs
+                var result = await context.Songs
                     .Where(s => s.Title.Contains(word.ToLower()) || s.OriginalTitle.Contains(word.ToLower()))
                     .AsNoTracking()
-                    .ToList(); //BUG: This always return a empty list. Why?
+                    .ToListAsync(); //BUG: This always return a empty list. Why?
                 // This is a bug of ef core :(
 
                 // Create new cache entry. Set value abd expiration.
@@ -412,6 +412,7 @@ namespace MorePracticeMalodyServer.Controllers
                 {
                     var result = await context.Charts
                         .Include(c => c.Song)
+                        .AsSplitQuery()
                         .AsNoTracking()
                         .FirstAsync(c => c.ChartId == cid);
 
@@ -473,6 +474,7 @@ namespace MorePracticeMalodyServer.Controllers
             {
                 chart = await context.Charts
                     .Include(c => c.Song)
+                    .AsSplitQuery()
                     .AsNoTracking()
                     .FirstAsync(c => c.ChartId == cid);
             }
@@ -487,10 +489,11 @@ namespace MorePracticeMalodyServer.Controllers
             // Try to find the download records with chart.
             try
             {
-                var dls = context.Downloads
+                var dls = await context.Downloads
                     .Include(d => d.Chart.Song)
+                    .AsSplitQuery()
                     .AsNoTracking()
-                    .ToList();
+                    .ToListAsync();
 
                 if (dls.Any())
                 {
@@ -551,7 +554,7 @@ namespace MorePracticeMalodyServer.Controllers
                     query = query.Where(e => e.Active);
 
                 // Success.
-                var result = query.ToList(); // TODO: Save events to cache?
+                var result = await query.ToListAsync(); // TODO: Save events to cache?
 
                 resp.Code = 0;
                 // To see if has more to send.
@@ -615,6 +618,7 @@ namespace MorePracticeMalodyServer.Controllers
                 // Try to find event with eid.
                 var @event = await context.Events
                     .Include(e => e.EventCharts)
+                    .AsSplitQuery()
                     .FirstAsync(e => e.EventId == eid); // TODO: Save event to cache?
 
                 // success.
