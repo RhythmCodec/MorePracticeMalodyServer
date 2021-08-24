@@ -7,7 +7,9 @@ namespace MorePracticeMalodyServer.Model.DbModel
     /// <summary>
     ///     A chart in database.
     /// </summary>
-    [Index("Type", "Mode", "Level")]
+    [Index(nameof(Type))]
+    [Index(nameof(Mode))]
+    [Index(nameof(Level))]
     public class Chart
     {
         /// <summary>

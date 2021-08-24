@@ -78,8 +78,8 @@ namespace MorePracticeMalodyServer.Controllers
             [FromForm] string name, [FromForm] string hash)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server does not support api version {api}.");
+            Util.CheckVersion(api);
+
             logger.LogInformation("Upload sign phase!");
             logger.LogInformation("User {uid} trying to upload chart {cid} for song {sid}.", uid, cid, sid);
 
@@ -181,6 +181,8 @@ namespace MorePracticeMalodyServer.Controllers
             [FromForm] string name, [FromForm] string hash, [FromForm] int size,
             [FromForm] string main)
         {
+            Util.CheckVersion(api);
+
             var selfProvide = true;
 
             // Check if chart exist.
@@ -251,7 +253,7 @@ namespace MorePracticeMalodyServer.Controllers
                         chart.Downloads.RemoveAll(d => d.Name == HttpUtility.UrlEncode(del)); // Fix issue #1
 
                     //Update others.
-                    foreach (var d in chart.Downloads) d.Hash = nameToHash[d.Name];
+                    foreach (var d in chart.Downloads) d.Hash = nameToHash[HttpUtility.UrlDecode(d.Name)];
                 }
 
                 await context.SaveChangesAsync();
@@ -296,8 +298,15 @@ namespace MorePracticeMalodyServer.Controllers
                         $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(chartMeta.Background)}"; // Fix issue #1
                     chart.Song.Length = 0; // See above.
                     chart.Song.Mode |= 1 << chartMeta.Mode;
+                    chart.Song.OriginalArtist = songMeta.Artistorg ?? songMeta.Artist;
                     chart.Song.OriginalTitle = songMeta.Titleorg ?? songMeta.Title;
                     chart.Song.Title = songMeta.Title;
+
+                    // Prepare search string for searching.
+                    chart.Song.SearchString =
+                        $"{Util.TrimSpecial(songMeta.Artist).ToLower()}-{Util.TrimSpecial(songMeta.Title).ToLower()}";
+                    chart.Song.OriginalSearchString =
+                        $"{Util.TrimSpecial(chart.Song.OriginalArtist).ToLower()}-{Util.TrimSpecial(chart.Song.OriginalTitle).ToLower()}";
 
                     await context.SaveChangesAsync();
                 }

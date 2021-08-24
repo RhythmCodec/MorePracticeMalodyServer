@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 
 namespace MorePracticeMalodyServer
@@ -25,7 +26,7 @@ namespace MorePracticeMalodyServer
             services.AddDbContextPool<DataContext>(option =>
             {
 #if DEBUG
-                option.LogTo(Console.WriteLine)
+                option.LogTo(Console.WriteLine, LogLevel.Information)
                     .EnableSensitiveDataLogging();
 #endif
                 if (string.IsNullOrWhiteSpace(Configuration["Data:ConnectionString"]))

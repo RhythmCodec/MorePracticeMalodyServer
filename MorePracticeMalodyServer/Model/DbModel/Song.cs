@@ -9,7 +9,9 @@ namespace MorePracticeMalodyServer.Model.DbModel
     /// <summary>
     ///     A song record in the database.
     /// </summary>
-    [Index("Title", "Artist", "Mode")]
+    [Index(nameof(SearchString))]
+    [Index(nameof(OriginalSearchString))]
+    [Index(nameof(Mode))]
     public class Song
     {
         /// <summary>
@@ -52,6 +54,16 @@ namespace MorePracticeMalodyServer.Model.DbModel
         ///     Artist in original language.
         /// </summary>
         public string OriginalArtist { get; set; }
+
+        /// <summary>
+        ///     Use to search.
+        /// </summary>
+        public string SearchString { get; set; }
+
+        /// <summary>
+        ///     Use to search in original language.
+        /// </summary>
+        public string OriginalSearchString { get; set; }
 
         /// <summary>
         ///     Mode bitmask of song.
