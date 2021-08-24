@@ -205,14 +205,18 @@ namespace MorePracticeMalodyServer.Controllers
                 if (!chart.Downloads.Any())
                 {
                     for (var i = 0; i != names.Length; i++)
+                    {
+                        var encodedName = HttpUtility.UrlEncode(names[i]);
+
                         context.Downloads.Add(new Download
                         {
                             ChartId = cid,
                             File =
-                                $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(names[i])}", // Fix issue #1
+                                $"http://{Request.Host.Value}/{sid}/{cid}/{encodedName}", // Fix issue #1
                             Hash = hashes[i],
-                            Name = HttpUtility.UrlEncode(names[i])
+                            Name = encodedName
                         });
+                    }
                 }
                 else
                 {
@@ -226,14 +230,18 @@ namespace MorePracticeMalodyServer.Controllers
                         .ToList();
                     foreach (var add in adds)
                         // Add new files.
+                    {
+                        var encodedName = HttpUtility.UrlEncode(add);
+
                         context.Downloads.Add(new Download
                         {
                             ChartId = cid,
                             File =
-                                $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(add)}", // Fix issue #1
-                            Hash = nameToHash[add],
-                            Name = HttpUtility.UrlEncode(add)
+                                $"http://{Request.Host.Value}/{sid}/{cid}/{encodedName}", // Fix issue #1
+                            Hash = nameToHash[encodedName],
+                            Name = encodedName
                         });
+                    }
 
                     // Find what should delete.
                     var dels = chart.Downloads.Select(d => HttpUtility.UrlDecode(d.Name)) // Fix issue #1
@@ -263,7 +271,7 @@ namespace MorePracticeMalodyServer.Controllers
                             "wwwroot",
                             sid.ToString(), cid.ToString(),
                             HttpUtility.UrlEncode(hashToName[main])),
-                        HttpUtility.UrlEncode(hashToName[main]))); // Fix issue #1
+                        hashToName[main])); // Fix issue #1
 
                     var chartMeta = file.Meta;
                     var songMeta = file.Meta.Song;

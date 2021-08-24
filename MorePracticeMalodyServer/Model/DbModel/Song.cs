@@ -49,6 +49,11 @@ namespace MorePracticeMalodyServer.Model.DbModel
         public string Artist { get; set; }
 
         /// <summary>
+        ///     Artist in original language.
+        /// </summary>
+        public string OriginalArtist { get; set; }
+
+        /// <summary>
         ///     Mode bitmask of song.
         /// </summary>
         public int Mode { get; set; }
