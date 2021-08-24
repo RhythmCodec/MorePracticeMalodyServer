@@ -35,8 +35,7 @@ API版本：**202103**
 * MySql/SQLServer/sqlite支持
 
 **目前已知有bug的功能：**
-* 谱面搜索：  
-  * 当关键字位于开头时不会返回结果。这是EF Core的bug。如果有兴趣，可以[在此追踪](https://github.com/dotnet/efcore/issues/25644)。
+* 一切正常 :)
 
 **目前未实现的功能：**
 * 支持 202108 API版本

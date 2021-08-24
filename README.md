@@ -35,8 +35,8 @@ You can use it as you download, no need configuration, and it can run the server
 * Supports MySql/SQLServer/sqlite
 
 **Currently Known Bugs:**
-* Charts searching：  
-  * Results are not returned when the keyword is at the beginning. This is a bug of EF Core. You can [track this bug](https://github.com/dotnet/efcore/issues/25644) if you have interests.
+* All right :)
+
 
 **Features Under Construction：**
 * Supports api version 202108

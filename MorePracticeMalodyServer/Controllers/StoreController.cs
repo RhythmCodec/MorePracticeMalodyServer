@@ -17,9 +17,7 @@
  *
  * Known bugs: 
  * 
- *      When search keyword at start of Title, nothing returns.
- *      This is caused by EF core sql generate.
- *      This only tested using sqlite.
+ * 
  */
 
 using System;
@@ -135,10 +133,10 @@ namespace MorePracticeMalodyServer.Controllers
             else // Query db and write result to cache
             {
                 var result = await context.Songs
-                    .Where(s => s.Title.Contains(word.ToLower()) || s.OriginalTitle.Contains(word.ToLower()))
+                    .Where(s => s.Title.Contains(word, StringComparison.CurrentCultureIgnoreCase) ||
+                                s.OriginalTitle.Contains(word, StringComparison.CurrentCultureIgnoreCase))
                     .AsNoTracking()
-                    .ToListAsync(); //BUG: This always return a empty list. Why?
-                // This is a bug of ef core :(
+                    .ToListAsync();
 
                 // Create new cache entry. Set value abd expiration.
                 var cacheEntry = cache.CreateEntry(word);
