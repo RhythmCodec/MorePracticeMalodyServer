@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MorePracticeMalodyServer.Data;
 
 namespace MorePracticeMalodyServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210824122852_DeleteUniqueOnDownloadHash")]
+    partial class DeleteUniqueOnDownloadHash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +53,9 @@ namespace MorePracticeMalodyServer.Migrations
 
                     b.HasKey("ChartId");
 
-                    b.HasIndex("Level");
-
-                    b.HasIndex("Mode");
-
                     b.HasIndex("SongId");
 
-                    b.HasIndex("Type");
+                    b.HasIndex("Type", "Mode", "Level");
 
                     b.ToTable("Charts");
                 });
@@ -174,16 +172,7 @@ namespace MorePracticeMalodyServer.Migrations
                     b.Property<int>("Mode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("OriginalArtist")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OriginalSearchString")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("OriginalTitle")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SearchString")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Time")
@@ -194,11 +183,7 @@ namespace MorePracticeMalodyServer.Migrations
 
                     b.HasKey("SongId");
 
-                    b.HasIndex("Mode");
-
-                    b.HasIndex("OriginalSearchString");
-
-                    b.HasIndex("SearchString");
+                    b.HasIndex("Title", "Artist", "Mode");
 
                     b.ToTable("Songs");
                 });

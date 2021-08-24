@@ -29,19 +29,19 @@ You can use it as you download, no need configuration, and it can run the server
 * Charts upload/download
 * Charts Searching (using Keywords or id) 
 * Chart list
+* Promotion list
 * Saves file on local server  
 * Event list
 * Supports MySql/SQLServer/sqlite
 
 **Currently Known Bugs:**
-* Charts searching：  
-  * Results are not returned when the keyword is at the beginning. This is a bug of EF Core. You can [track this bug](https://github.com/dotnet/efcore/issues/25644) if you have interests.
+* All right :)
+
 
 **Features Under Construction：**
-* Promotion list
+* Supports api version 202108
 
 **Will be Added：**
-* Promotion list
 * Upload identity restructions
 * User identity restructions
 * Save on third-party device or website

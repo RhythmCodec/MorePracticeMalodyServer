@@ -17,9 +17,7 @@
  *
  * Known bugs: 
  * 
- *      When search keyword at start of Title, nothing returns.
- *      This is caused by EF core sql generate.
- *      This only tested using sqlite.
+ * 
  */
 
 using System;
@@ -74,8 +72,7 @@ namespace MorePracticeMalodyServer.Controllers
             int lvle, int beta, int from)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server not support api version {api}.");
+            Util.CheckVersion(api);
 
             var resp = new Response<SongInfo>();
             // Max Items server will return.
@@ -102,20 +99,20 @@ namespace MorePracticeMalodyServer.Controllers
 
                 if (lvle != 0) temp = temp.Where(c => c.Level < lvle);
 
-                var result = temp
+                var result = await temp
                     .Select(c => c.Song)
                     .Distinct()
                     .OrderBy(s => s.SongId)
                     .Skip(from * maxItem)
                     .Take(maxItem)
-                    .ToList(); //TODO: Save to cache.
+                    .ToListAsync(); //TODO: Save to cache.
 
                 resp.Code = 0;
                 // Add song to return value.
                 foreach (var song in result)
                     resp.Data.Add(new SongInfo
                     {
-                        Artist = song.Artist,
+                        Artist = org == 0 ? song.Artist : song.OriginalArtist,
                         Bpm = song.Bpm,
                         Cover = song.Cover,
                         Length = song.Length,
@@ -129,19 +126,22 @@ namespace MorePracticeMalodyServer.Controllers
             }
 
             // Try to find data from memory cache first.
-            if (cache.TryGetValue(word.ToLower(), out List<Song> cachedSongList))
+            var keyword = Util.TrimSpecial(word).ToLower();
+            if (cache.TryGetValue(keyword, out List<Song> cachedSongList))
             {
             }
             else // Query db and write result to cache
             {
-                var result = context.Songs
-                    .Where(s => s.Title.Contains(word.ToLower()) || s.OriginalTitle.Contains(word.ToLower()))
+                var result = await context.Songs
+                    .Include(s => s.Charts)
+                    .Where(s => s.SearchString.Contains(keyword) ||
+                                s.OriginalSearchString.Contains(keyword))
+                    .AsSplitQuery()
                     .AsNoTracking()
-                    .ToList(); //BUG: This always return a empty list. Why?
-                // This is a bug of ef core :(
+                    .ToListAsync();
 
                 // Create new cache entry. Set value abd expiration.
-                var cacheEntry = cache.CreateEntry(word);
+                var cacheEntry = cache.CreateEntry(keyword);
                 cacheEntry.Value = result;
                 cacheEntry.AbsoluteExpirationRelativeToNow = new TimeSpan(0, 2, 0);
 
@@ -157,10 +157,10 @@ namespace MorePracticeMalodyServer.Controllers
                     song.Charts = song.Charts
                         .Where(c => c.Type == ChartState.Stable)
                         .ToList();
-
-                song.Charts = song.Charts
-                    .Where(c => c.Level > lvge && c.Level < lvle) // select level
-                    .ToList();
+                if (lvle != 0 && lvge != 0)
+                    song.Charts = song.Charts
+                        .Where(c => c.Level > lvge && c.Level < lvle) // select level
+                        .ToList();
 
                 if (mode != -1)
                     song.Charts = song.Charts
@@ -219,11 +219,47 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<Response<SongInfo>> GetPromote(int uid, int api, int org, int mode, int from)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server not support api version {api}.");
+            Util.CheckVersion(api);
 
-            //TODO
-            return new Response<SongInfo>();
+            var resp = new Response<SongInfo>();
+            var maxCount = 50;
+
+            // Query promotes from database.
+            var result = await context.Promotions
+                .Include(p => p.Song)
+                .AsNoTracking()
+                .ToListAsync(); // TODO: Cache result?
+
+            resp.Code = 0;
+            // To see if has more.
+            if (result.Count - maxCount * from > maxCount)
+            {
+                resp.HasMore = true;
+                resp.Next = from + 1;
+            }
+            else
+            {
+                resp.HasMore = false;
+            }
+
+            // Insert to Data
+            for (var i = from * maxCount; resp.HasMore ? i != from * maxCount + maxCount : i != result.Count; i++)
+            {
+                var song = result[i].Song;
+                resp.Data.Add(new SongInfo
+                {
+                    Artist = org == 0 ? song.Artist : song.OriginalArtist,
+                    Bpm = song.Bpm,
+                    Cover = song.Cover,
+                    Length = song.Length,
+                    Mode = song.Mode,
+                    Sid = song.SongId,
+                    Time = GetTimeStamp(song.Time),
+                    Title = org == 0 ? song.Title : song.OriginalTitle
+                });
+            }
+
+            return resp;
         }
 
         /// <summary>
@@ -241,8 +277,7 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<Response<ChartInfo>> GetChart(int uid, int api, int sid, int beta, int mode, int from)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server not support api version {api}.");
+            Util.CheckVersion(api);
 
             var resp = new Response<ChartInfo>();
             // Max Items server will return.
@@ -324,8 +359,7 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<Response<SongInfo>> QuerySong(int uid, int api, int sid = -1, int cid = -1, int org = 0)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server does not support api version {api}.");
+            Util.CheckVersion(api);
 
             // If not providing a valid SID or CID, throw a exception.
             if (sid == -1 && cid == -1)
@@ -375,6 +409,7 @@ namespace MorePracticeMalodyServer.Controllers
                 {
                     var result = await context.Charts
                         .Include(c => c.Song)
+                        .AsSplitQuery()
                         .AsNoTracking()
                         .FirstAsync(c => c.ChartId == cid);
 
@@ -384,7 +419,7 @@ namespace MorePracticeMalodyServer.Controllers
 
                     resp.Data.Add(new SongInfo
                     {
-                        Artist = song.Artist,
+                        Artist = org == 0 ? song.Artist : song.OriginalArtist,
                         Bpm = song.Bpm,
                         Cover = song.Cover,
                         Length = song.Length,
@@ -425,8 +460,7 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<DownloadResponse> GetDownload(int uid, int api, int cid)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server does not support api version {api}.");
+            Util.CheckVersion(api);
 
             var resp = new DownloadResponse();
             Chart chart = null;
@@ -436,6 +470,7 @@ namespace MorePracticeMalodyServer.Controllers
             {
                 chart = await context.Charts
                     .Include(c => c.Song)
+                    .AsSplitQuery()
                     .AsNoTracking()
                     .FirstAsync(c => c.ChartId == cid);
             }
@@ -450,10 +485,11 @@ namespace MorePracticeMalodyServer.Controllers
             // Try to find the download records with chart.
             try
             {
-                var dls = context.Downloads
+                var dls = await context.Downloads
                     .Include(d => d.Chart.Song)
+                    .AsSplitQuery()
                     .AsNoTracking()
-                    .ToList();
+                    .ToListAsync();
 
                 if (dls.Any())
                 {
@@ -498,8 +534,7 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<Response<EventInfo>> GetEvents(int uid, int api, int active, int from)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server does not support api version {api}.");
+            Util.CheckVersion(api);
 
             var maxItem = 50;
             var resp = new Response<EventInfo>();
@@ -514,7 +549,7 @@ namespace MorePracticeMalodyServer.Controllers
                     query = query.Where(e => e.Active);
 
                 // Success.
-                var result = query.ToList(); // TODO: Save events to cache?
+                var result = await query.ToListAsync(); // TODO: Save events to cache?
 
                 resp.Code = 0;
                 // To see if has more to send.
@@ -567,8 +602,7 @@ namespace MorePracticeMalodyServer.Controllers
         public async Task<Response<EventChartInfo>> GetEvent(int uid, int api, int eid, int org, int from)
         {
             // If not support the api version, throw a exception.
-            if (api != Consts.API_VERSION)
-                throw new NotSupportedException($"This server does not support api version {api}.");
+            Util.CheckVersion(api);
 
             var maxItem = 50; // Max item server will return.
             var resp = new Response<EventChartInfo>();
@@ -578,6 +612,7 @@ namespace MorePracticeMalodyServer.Controllers
                 // Try to find event with eid.
                 var @event = await context.Events
                     .Include(e => e.EventCharts)
+                    .AsSplitQuery()
                     .FirstAsync(e => e.EventId == eid); // TODO: Save event to cache?
 
                 // success.
@@ -603,7 +638,7 @@ namespace MorePracticeMalodyServer.Controllers
                     var chart = charts[i].Chart;
                     resp.Data.Add(new EventChartInfo
                     {
-                        Artist = song.Artist,
+                        Artist = org == 0 ? song.Artist : song.OriginalArtist,
                         Cid = chart.ChartId,
                         Cover = song.Cover,
                         Creator = chart.Creator,

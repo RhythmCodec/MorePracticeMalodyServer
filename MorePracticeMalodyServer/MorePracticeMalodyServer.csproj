@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>37bf4e05-2836-4dd4-b7e4-01b6b356ce73</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <AssemblyVersion>1.0.0.66</AssemblyVersion>
-    <FileVersion>1.0.0.66</FileVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,8 +17,8 @@
     <UpdatePackageVersion>False</UpdatePackageVersion>
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-    <AssemblyVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.Increment</AssemblyVersionSettings>
-    <AssemblyFileVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.Increment</AssemblyFileVersionSettings>
+    <AssemblyVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.IncrementWithResetOnIncrease</AssemblyVersionSettings>
+    <AssemblyFileVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.IncrementWithResetOnIncrease</AssemblyFileVersionSettings>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -27,11 +27,11 @@
     <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
     <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
-    <AssemblyVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.Increment</AssemblyVersionSettings>
+    <AssemblyVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.IncrementWithResetOnIncrease</AssemblyVersionSettings>
     <UpdatePackageVersion>False</UpdatePackageVersion>
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-    <AssemblyFileVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.Increment</AssemblyFileVersionSettings>
+    <AssemblyFileVersionSettings>IncrementOnDemand.IncrementOnDemand.IncrementOnDemand.IncrementWithResetOnIncrease</AssemblyFileVersionSettings>
   </PropertyGroup>
 
   <ItemGroup>
