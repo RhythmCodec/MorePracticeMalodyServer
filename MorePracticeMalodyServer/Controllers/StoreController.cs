@@ -612,7 +612,8 @@ namespace MorePracticeMalodyServer.Controllers
                 // Try to find event with eid.
                 var @event = await context.Events
                     .Include(e => e.EventCharts)
-                    .AsSplitQuery()
+                    .ThenInclude(c => c.Chart)
+                    .ThenInclude(c => c.Song)
                     .FirstAsync(e => e.EventId == eid); // TODO: Save event to cache?
 
                 // success.
