@@ -21,17 +21,17 @@ jobs:
       run: dotnet restore
     
     - name: Publish Linux-x64-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime linux-x64 --framework net5.0 -o ./build/linux-x64-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime linux-x64 --framework net5.0 -o ./build/linux-x64-without-runtime
     - name: Publish Linux-x64
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime linux-x64 --framework net5.0 -o ./build/linux-x64
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime linux-x64 --framework net5.0 -o ./build/linux-x64
     - name: Publish Linux-arm-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime linux-arm --framework net5.0 -o ./build/linux-arm-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime linux-arm --framework net5.0 -o ./build/linux-arm-without-runtime
     - name: Publish Linux-arm
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime linux-arm --framework net5.0 -o ./build/linux-arm
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime linux-arm --framework net5.0 -o ./build/linux-arm
     - name: Publish Linux-arm64-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime linux-arm64 --framework net5.0 -o ./build/linux-arm64-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime linux-arm64 --framework net5.0 -o ./build/linux-arm64-without-runtime
     - name: Publish Linux-arm64
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime linux-arm64 --framework net5.0 -o ./build/linux-arm64
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime linux-arm64 --framework net5.0 -o ./build/linux-arm64
       
     - name: Pack Linux-x64-without-runtime
       run: tar -czvf linux-x64-without-runtime.tar.gz  -C ~/work/MorePracticeMalodyServer/MorePracticeMalodyServer/build linux-x64-without-runtime
@@ -75,25 +75,25 @@ jobs:
       run: dotnet restore
     
     - name: Publish Win-x64-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime win-x64 --framework net5.0 -o ./build/win-x64-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime win-x64 --framework net5.0 -o ./build/win-x64-without-runtime
     - name: Publish Win-x64
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win-x64 --framework net5.0 -o ./build/win-x64
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime win-x64 --framework net5.0 -o ./build/win-x64
     - name: Publish Win-x86-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime win-x86 --framework net5.0 -o ./build/win-x86-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime win-x86 --framework net5.0 -o ./build/win-x86-without-runtime
     - name: Publish Win-x86
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win-x86 --framework net5.0 -o ./build/win-x86
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime win-x86 --framework net5.0 -o ./build/win-x86
     - name: Publish Win-arm-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime win-arm --framework net5.0 -o ./build/win-arm-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime win-arm --framework net5.0 -o ./build/win-arm-without-runtime
     - name: Publish Win-arm
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win-arm --framework net5.0 -o ./build/win-arm
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime win-arm --framework net5.0 -o ./build/win-arm
     - name: Publish Win10-x64-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime win10-x64 --framework net5.0 -o ./build/win10-x64-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime win10-x64 --framework net5.0 -o ./build/win10-x64-without-runtime
     - name: Publish Win10-x64
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win10-x64 --framework net5.0 -o ./build/win10-x64
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime win10-x64 --framework net5.0 -o ./build/win10-x64
     - name: Publish Win10-arm64-without-runtime
-      run: dotnet publish -p:PublishReadyToRun=true --no-self-contained --runtime win10-arm64 --framework net5.0 -o ./build/win10-arm64-without-runtime
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --no-self-contained --runtime win10-arm64 --framework net5.0 -o ./build/win10-arm64-without-runtime
     - name: Publish Win10-arm64
-      run: dotnet publish -p:PublishReadyToRun=true --self-contained true --runtime win10-arm64 --framework net5.0 -o ./build/win10-arm64
+      run: dotnet publish -p:PublishReadyToRun=true --configuration Release --self-contained true --runtime win10-arm64 --framework net5.0 -o ./build/win10-arm64
     
     - name: Pack Win-x64-without-runtime
       run: 7z a win-x64-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win-x64-without-runtime\
@@ -128,4 +128,19 @@ jobs:
           win10-x64.7z
           win10-arm64-without-runtime.7z
           win10-arm64.7z
+        token: ${{ secrets.RELEASE_TOKEN }}
+        
+  Changelog: 
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate Changelog
+      uses: glennawatson/ChangeLog@v1
+      id: changelog
+    - name: Write to release
+      uses: softprops/action-gh-release@v1
+      with: 
+        body: ${{ steps.Changelog.outputs.changelog }}
         token: ${{ secrets.RELEASE_TOKEN }}
