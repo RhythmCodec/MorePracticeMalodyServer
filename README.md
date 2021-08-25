@@ -17,7 +17,7 @@ State:
 ## Basic
 
 API version：**202103**  
-Application version：**1.0.0**  
+Application version：**1.0.3**  
 Runtime：**ASP.NET Core**
 
 An open-source Malody V Chart Server. ~Can be run on low loads, but surely booms at high loads.~  
@@ -47,6 +47,7 @@ You can use it as you download, no need configuration, and it can run the server
 * Save on third-party device or website
 * Supports api version 202108
 * Supports docker
+* Frontend management page
 
 ## Installation
 
