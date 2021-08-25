@@ -570,9 +570,9 @@ namespace MorePracticeMalodyServer.Controllers
                         Active = result[i].Active,
                         Cover = result[i].Cover,
                         Eid = result[i].EventId,
-                        End = result[i].End.ToString("yyyy-mm-dd"),
+                        End = result[i].End.ToString("yyyy-MM-dd"),
                         Name = result[i].Name,
-                        Start = result[i].Start.ToString("yyyy-mm-dd")
+                        Start = result[i].Start.ToString("yyyy-MM-dd")
                     });
 
                 return resp;
@@ -612,7 +612,8 @@ namespace MorePracticeMalodyServer.Controllers
                 // Try to find event with eid.
                 var @event = await context.Events
                     .Include(e => e.EventCharts)
-                    .AsSplitQuery()
+                    .ThenInclude(c => c.Chart)
+                    .ThenInclude(c => c.Song)
                     .FirstAsync(e => e.EventId == eid); // TODO: Save event to cache?
 
                 // success.
