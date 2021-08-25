@@ -115,10 +115,15 @@ jobs:
       run: 7z a win10-arm64-without-runtime.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64-without-runtime\
     - name: Pack Win10-arm64
       run: 7z a win10-arm64.7z D:\a\MorePracticeMalodyServer\MorePracticeMalodyServer\build\win10-arm64\
+      
+    - name: Generate Changelog
+      uses: glennawatson/ChangeLog@v1
+      id: changelog
           
     - name: Upload release files
       uses: softprops/action-gh-release@v1
       with: 
+        body: ${{ steps.Changelog.outputs.changelog }}
         files: |
           win-x64-without-runtime.7z
           win-x64.7z
