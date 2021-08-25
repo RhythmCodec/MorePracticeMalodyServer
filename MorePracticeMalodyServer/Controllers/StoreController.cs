@@ -570,9 +570,9 @@ namespace MorePracticeMalodyServer.Controllers
                         Active = result[i].Active,
                         Cover = result[i].Cover,
                         Eid = result[i].EventId,
-                        End = result[i].End.ToString("yyyy-mm-dd"),
+                        End = result[i].End.ToString("yyyy-MM-dd"),
                         Name = result[i].Name,
-                        Start = result[i].Start.ToString("yyyy-mm-dd")
+                        Start = result[i].Start.ToString("yyyy-MM-dd")
                     });
 
                 return resp;
