@@ -127,5 +127,9 @@ meta信息为文本键值对。在程序中，我们提供了文件的cid，sid�
 **Pomelo.EntityFrameworkCore.MySql**
 * MIT
 
+**NVorbis**
+* Mit
+
+
 ## 感谢
 * [@soloopooo](https://github.com/soloopooo)
