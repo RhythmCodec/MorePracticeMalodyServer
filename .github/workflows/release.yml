@@ -123,7 +123,7 @@ jobs:
     - name: Upload release files
       uses: softprops/action-gh-release@v1
       with: 
-        body: ${{ steps.Changelog.outputs.changelog }}
+        body: ${{ steps.changelog.outputs.changelog }}
         files: |
           win-x64-without-runtime.7z
           win-x64.7z
@@ -135,17 +135,3 @@ jobs:
           win10-arm64.7z
         token: ${{ secrets.RELEASE_TOKEN }}
         
-  Changelog: 
-    
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Generate Changelog
-      uses: glennawatson/ChangeLog@v1
-      id: changelog
-    - name: Write to release
-      uses: softprops/action-gh-release@v1
-      with: 
-        body: ${{ steps.Changelog.outputs.changelog }}
-        token: ${{ secrets.RELEASE_TOKEN }}
