@@ -576,7 +576,8 @@ namespace MorePracticeMalodyServer.Controllers
                         Eid = result[i].EventId,
                         End = result[i].End.ToString("yyyy-MM-dd"),
                         Name = result[i].Name,
-                        Start = result[i].Start.ToString("yyyy-MM-dd")
+                        Start = result[i].Start.ToString("yyyy-MM-dd"),
+                        Sponsor = result[i].Sponsor
                     });
 
                 return resp;
