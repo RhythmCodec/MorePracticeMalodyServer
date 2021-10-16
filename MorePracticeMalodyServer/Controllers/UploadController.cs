@@ -316,7 +316,7 @@ namespace MorePracticeMalodyServer.Controllers
                     chart.Level = 0; // This doesn't matter..Maybe //TODO: find a way to kown the difficulty.
                     chart.Mode = chartMeta.Mode;
                     chart.Size = size;
-                    chart.Type = chartMeta.Preview == 0 ? ChartState.Stable : ChartState.Beta;
+                    chart.Type = ChartState.Stable; // Now we have no way to know if this is beta or stable.
                     chart.UserId = uid;
                     chart.Version = chartMeta.Version;
                     chart.Song.Artist = songMeta.Artist;
