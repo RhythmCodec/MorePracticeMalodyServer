@@ -2,7 +2,8 @@
 {
     public static class Consts
     {
-        public static int API_VERSION = 202103;
+        public static int API_VERSION = 202108;
+        public static int MIN_SUPPORT = 202103;
 
         #region Modes
 

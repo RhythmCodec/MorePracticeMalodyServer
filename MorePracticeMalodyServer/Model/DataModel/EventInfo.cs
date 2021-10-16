@@ -33,5 +33,7 @@
         ///     Event cover picture
         /// </summary>
         public string Cover { get; set; }
+
+        public string Sponsor { get; set; }
     }
 }

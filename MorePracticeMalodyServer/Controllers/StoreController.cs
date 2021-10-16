@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Model;
 using MorePracticeMalodyServer.Model.DataModel;
 using MorePracticeMalodyServer.Model.DbModel;
+using EventInfo = MorePracticeMalodyServer.Model.DataModel.EventInfo;
 
 namespace MorePracticeMalodyServer.Controllers
 {
@@ -271,10 +273,12 @@ namespace MorePracticeMalodyServer.Controllers
         /// <param name="beta">int: Whether to return unstable charts</param>
         /// <param name="mode">int: Return given chart Mode</param>
         /// <param name="from">int: Paging Start</param>
+        /// <param name="promote">int: If song comes from promote list</param>
         /// <returns name="resp">Response a chart info</returns>
         [Route("charts")]
         [HttpGet]
-        public async Task<Response<ChartInfo>> GetChart(int uid, int api, int sid, int beta, int mode, int from)
+        public async Task<Response<ChartInfo>> GetChart(int uid, int api, int sid, int beta, int mode, int from,
+            int promote)
         {
             // If not support the api version, throw a exception.
             Util.CheckVersion(api);
@@ -572,7 +576,8 @@ namespace MorePracticeMalodyServer.Controllers
                         Eid = result[i].EventId,
                         End = result[i].End.ToString("yyyy-MM-dd"),
                         Name = result[i].Name,
-                        Start = result[i].Start.ToString("yyyy-MM-dd")
+                        Start = result[i].Start.ToString("yyyy-MM-dd"),
+                        Sponsor = result[i].Sponsor
                     });
 
                 return resp;
@@ -667,6 +672,25 @@ namespace MorePracticeMalodyServer.Controllers
                 return resp;
 #endif
             }
+        }
+
+        /// <summary>
+        ///     Get server info.
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="api"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("info")]
+        public async Task<object> GetInfo(int uid, int api)
+        {
+            return new
+            {
+                Code = 0,
+                Api = Consts.API_VERSION,
+                Min = Consts.MIN_SUPPORT,
+                Welcome = $"MP Server v{Assembly.GetExecutingAssembly().GetName().Version} Online!"
+            };
         }
 
         private long GetTimeStamp() // Get timestamp. 

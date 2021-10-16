@@ -7,7 +7,7 @@ namespace MorePracticeMalodyServer
     {
         public static void CheckVersion(int version)
         {
-            if (version > Consts.API_VERSION)
+            if (version > Consts.API_VERSION || version < Consts.MIN_SUPPORT)
                 throw new NotSupportedException($"This server does not support api version {version}.");
         }
 

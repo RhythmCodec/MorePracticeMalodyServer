@@ -36,6 +36,7 @@ using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Model;
 using MorePracticeMalodyServer.Model.DbModel;
 using MorePracticeMalodyServer.Model.FileModel;
+using NVorbis;
 
 namespace MorePracticeMalodyServer.Controllers
 {
@@ -282,21 +283,47 @@ namespace MorePracticeMalodyServer.Controllers
                         .Include(c => c.Song)
                         .FirstAsync(c => c.ChartId == cid);
 
+                    // Try to find music file name.
+                    string soundFileName = null;
+                    try
+                    {
+                        // If only has one ogg, that's it!
+                        soundFileName = names.Single(n => n.Contains(".ogg"));
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // If has more than one, we can check song meta.
+                        // But this may be null.
+                        // If you choose music file when uploading, this will have a value.
+                        soundFileName = songMeta.File;
+                    }
+
+                    // Now read sound file to get length.
+                    var soundLength = 0;
+                    if (soundFileName is not null)
+                    {
+                        soundFileName = HttpUtility.UrlEncode(soundFileName);
+                        using var song = new VorbisReader(Path.Combine(Environment.CurrentDirectory, "wwwroot",
+                            sid.ToString(), cid.ToString(), soundFileName));
+                        soundLength = (int)song.TotalTime.TotalSeconds;
+                    }
+
+                    soundFileName = HttpUtility.UrlEncode(soundFileName);
+
                     // Update our db.
                     chart.Creator = chartMeta.Creator;
-                    chart.Length = 0; //TODO: find a way to know how long the song? 
-                    // -- commented by soloopooo: use ffmpeg(ffmpeg -i path/to/example.mp3) or using C# modules: see https://blog.csdn.net/u013419838/article/details/108489023
+                    chart.Length = soundLength;
                     chart.Level = 0; // This doesn't matter..Maybe //TODO: find a way to kown the difficulty.
                     chart.Mode = chartMeta.Mode;
                     chart.Size = size;
-                    chart.Type = chartMeta.Preview == 0 ? ChartState.Stable : ChartState.Beta;
+                    chart.Type = ChartState.Stable; // Now we have no way to know if this is beta or stable.
                     chart.UserId = uid;
                     chart.Version = chartMeta.Version;
                     chart.Song.Artist = songMeta.Artist;
                     chart.Song.Bpm = songMeta.Bpm;
                     chart.Song.Cover =
                         $"http://{Request.Host.Value}/{sid}/{cid}/{HttpUtility.UrlEncode(chartMeta.Background)}"; // Fix issue #1
-                    chart.Song.Length = 0; // See above.
+                    chart.Song.Length = soundLength;
                     chart.Song.Mode |= 1 << chartMeta.Mode;
                     chart.Song.OriginalArtist = songMeta.Artistorg ?? songMeta.Artist;
                     chart.Song.OriginalTitle = songMeta.Titleorg ?? songMeta.Title;

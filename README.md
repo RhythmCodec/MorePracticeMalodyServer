@@ -128,5 +128,8 @@ This program uses GPL v3.0 (GNU GENERAL PUBLIC LICENSE v3.0) Agreement. By using
 **Pomelo.EntityFrameworkCore.MySql**
 * MIT
 
+**NVorbis**
+* Mit
+
 ## Special thanks to
 * [@soloopooo](https://github.com/soloopooo)
