@@ -5,6 +5,9 @@
         public static int API_VERSION = 202108;
         public static int MIN_SUPPORT = 202103;
 
+        // Max items that will query.
+        public static int MaxItem = 50;
+
         #region Modes
 
         public static int MODE_KEY   = 0;

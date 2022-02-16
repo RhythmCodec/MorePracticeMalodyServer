@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 
 namespace MorePracticeMalodyServer.Model
 {
@@ -26,6 +26,6 @@ namespace MorePracticeMalodyServer.Model
         /// <summary>
         ///     The data that client requested.
         /// </summary>
-        public ConcurrentBag<T> Data { get; set; } = new();
+        public List<T> Data { get; set; } = new();
     }
 }

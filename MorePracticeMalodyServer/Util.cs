@@ -22,5 +22,13 @@ namespace MorePracticeMalodyServer
             var charArray = input.Where(c => IsCharacter(c) || char.IsLetterOrDigit(c)).ToArray();
             return new string(charArray);
         }
+
+        public static long GetTimeStamp(DateTime time) // Get specified timestamp.
+        {
+            var startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
+            var nowTime = time;
+            var unixTime = (long)Math.Round((nowTime - startTime).TotalSeconds, MidpointRounding.AwayFromZero);
+            return unixTime;
+        }
     }
 }
