@@ -1,8 +1,7 @@
-﻿namespace MorePracticeMalodyServer.Model.DbModel
+﻿namespace MorePracticeMalodyServer.Model.DbModel;
+
+public class EventChart
 {
-    public class EventChart
-    {
-        public int Id { get; set; }
-        public Chart Chart { get; set; }
-    }
+    public int Id { get; set; }
+    public Chart Chart { get; set; }
 }

@@ -9,70 +9,69 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 
-namespace MorePracticeMalodyServer
+namespace MorePracticeMalodyServer;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        Configuration = configuration;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddDbContextPool<DataContext>(option =>
         {
-            services.AddDbContextPool<DataContext>(option =>
-            {
 #if DEBUG
-                option.LogTo(Console.WriteLine, LogLevel.Information)
-                    .EnableSensitiveDataLogging();
+            option.LogTo(Console.WriteLine, LogLevel.Information)
+                .EnableSensitiveDataLogging();
 #endif
-                if (string.IsNullOrWhiteSpace(Configuration["Data:ConnectionString"]))
-                    throw new ArgumentException(
-                        "ConnectionString cannot be null or whitespace! Check your configuration!");
-                switch (Configuration["Data:Provider"].ToLower())
-                {
-                    case "sqlite":
-                        option.UseSqlite(Configuration["Data:ConnectionString"]);
-                        break;
-                    case "mysql":
-                        option.UseMySql(Configuration["Data:ConnectionString"],
-                            new MySqlServerVersion(Configuration["Data:ServerVersion"]));
-                        break;
-                    case "sqlserver":
-                        option.UseSqlServer(Configuration["Data:ConnectionString"]);
-                        break;
-                    default:
-                        throw new ArgumentException(
-                            "Provider is invalid. Make sure it's one of 'MySql' 'Sqlite' 'SqlServer'!");
-                }
-            }, int.Parse(Configuration["Data:PoolSize"]));
-            services.AddMemoryCache();
-            services.AddControllers();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-
-            app.UseHttpsRedirection();
-
-            // Support .mc file download.
-            var provider = new FileExtensionContentTypeProvider();
-            provider.Mappings[".mc"] = "application/octet-stream";
-            app.UseStaticFiles(new StaticFileOptions
+            if (string.IsNullOrWhiteSpace(Configuration["Data:ConnectionString"]))
+                throw new ArgumentException(
+                    "ConnectionString cannot be null or whitespace! Check your configuration!");
+            switch (Configuration["Data:Provider"].ToLower())
             {
-                ContentTypeProvider = provider
-            });
+                case "sqlite":
+                    option.UseSqlite(Configuration["Data:ConnectionString"]);
+                    break;
+                case "mysql":
+                    option.UseMySql(Configuration["Data:ConnectionString"],
+                        new MySqlServerVersion(Configuration["Data:ServerVersion"]));
+                    break;
+                case "sqlserver":
+                    option.UseSqlServer(Configuration["Data:ConnectionString"]);
+                    break;
+                default:
+                    throw new ArgumentException(
+                        "Provider is invalid. Make sure it's one of 'MySql' 'Sqlite' 'SqlServer'!");
+            }
+        }, int.Parse(Configuration["Data:PoolSize"]));
+        services.AddMemoryCache();
+        services.AddControllers();
+    }
 
-            app.UseRouting();
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            app.UseAuthorization();
+        app.UseHttpsRedirection();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
+        // Support .mc file download.
+        var provider = new FileExtensionContentTypeProvider();
+        provider.Mappings[".mc"] = "application/octet-stream";
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            ContentTypeProvider = provider
+        });
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }
