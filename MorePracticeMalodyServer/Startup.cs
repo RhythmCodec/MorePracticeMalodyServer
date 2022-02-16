@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
+using MorePracticeMalodyServer.StorageProvider;
 
 namespace MorePracticeMalodyServer;
 
@@ -49,6 +50,16 @@ public class Startup
                         "Provider is invalid. Make sure it's one of 'MySql' 'Sqlite' 'SqlServer'!");
             }
         }, int.Parse(Configuration["Data:PoolSize"]));
+
+        // Add Storage Provider
+        switch (Configuration["Storage:Provider"])
+        {
+            case "self": // default use local storage.
+            default:
+                services.AddScoped<IStorageProvider, FileSystemStorageProvider>();
+                break;
+        }
+
         services.AddMemoryCache();
         services.AddControllers();
     }

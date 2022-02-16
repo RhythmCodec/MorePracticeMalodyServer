@@ -22,20 +22,14 @@
  *      TODO: get the length of song file.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Model;
 using MorePracticeMalodyServer.Model.DbModel;
 using MorePracticeMalodyServer.Model.FileModel;
+using MorePracticeMalodyServer.StorageProvider;
 using NVorbis;
 
 namespace MorePracticeMalodyServer.Controllers;
@@ -50,17 +44,20 @@ public class UploadController : ControllerBase
     private readonly IConfiguration configuration;
     private readonly DataContext context;
     private readonly ILogger<UploadController> logger;
+    private readonly IStorageProvider storage;
 
     /// <summary>
     ///     Init controller.
     /// </summary>
     /// <param name="context">DataContext</param>
     /// <param name="logger">logger</param>
-    public UploadController(DataContext context, ILogger<UploadController> logger, IConfiguration configuration)
+    public UploadController(DataContext context, ILogger<UploadController> logger, IConfiguration configuration,
+        IStorageProvider storage)
     {
         this.context = context;
         this.logger = logger;
         this.configuration = configuration;
+        this.storage = storage;
     }
 
     /// <summary>
@@ -84,7 +81,6 @@ public class UploadController : ControllerBase
         logger.LogInformation("Upload sign phase!");
         logger.LogInformation("User {uid} trying to upload chart {cid} for song {sid}.", uid, cid, sid);
 
-        var resp = new SignResponse();
         Song song;
         // Try to find song first.
         try
@@ -131,35 +127,8 @@ public class UploadController : ControllerBase
             await context.SaveChangesAsync();
         }
 
-        // We just check if name and hash has the same count.
-        var names = name.Split(',');
-        var hashes = hash.Split(',');
-        if (names.Length != hashes.Length)
-        {
-            resp.Code = 0;
-            resp.ErrorIndex = names.Length - 1;
-            resp.ErrorMsg = $"{names.Length} file(s) provide. But only {hashes.Length} hash(es) give to server.";
-
-            return resp;
-        }
-
-        // Now we can upload.
-        resp.Code = 0;
-        resp.ErrorMsg = "";
-        // Malody seems send one file a time.
-        // Each file should have a meta Item, otherwise game will think something wrong.
-        foreach (var h in hashes)
-            resp.Meta.Add(new
-            {
-                Sid = sid,
-                Cid = cid,
-                Hash = h
-            });
-        if (configuration["Storage:Provider"]?.ToLower() != "self") // Use other storage provider.
-            resp.Host = configuration["Storage:Provider"];
-        else // Use self storage provide.
-            resp.Host =
-                $"http://{Request.Host.Value}/api/SelfUpload/receive";
+        // Get sign from provider
+        var resp = storage.Sign(uid, sid, cid, name, hash, Request.Host.Value);
 
         return resp;
     }
