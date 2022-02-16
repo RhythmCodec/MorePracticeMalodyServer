@@ -16,6 +16,4 @@ public interface IStorageProvider
     /// <param name="host">Server hostname.</param>
     /// <returns>Response of Sign.</returns>
     public SignResponse Sign(int uid, int sid, int cid, string name, string hash, string host);
-
-    public 
 }
