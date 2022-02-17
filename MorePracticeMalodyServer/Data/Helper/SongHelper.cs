@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MorePracticeMalodyServer.Model.DataModel;
 using MorePracticeMalodyServer.Model.DbModel;
 
@@ -16,7 +13,9 @@ public static class SongHelper
         // Build temp query chain to find songs
         var temp = context.Songs
             .AsNoTracking();
-        if (mode != -1) temp = temp.Where(c => ((c.Mode >> mode) & 1) == 1);
+
+        var modemask = 1 << mode; // Can't use c.Mode >> mode & 0 in .Where, so this is a substitution.
+        if (mode != -1) temp = temp.Where(c => (modemask & c.Mode) != 0);
 
         // We don't know the difficulty now. So just skip this.
         // If we can know difficulty in the future, I will fix this.
@@ -27,8 +26,8 @@ public static class SongHelper
         // And now we set all chart Stable.
         if (beta != 0) ;
 
-        if (word is not null)
-            temp.Where(s => s.SearchString.Contains(word) || s.OriginalSearchString.Contains(word));
+        if (!string.IsNullOrWhiteSpace(word))
+            temp = temp.Where(s => s.SearchString.Contains(word) || s.OriginalSearchString.Contains(word));
 
         // Select songs.
         List<Song> result;

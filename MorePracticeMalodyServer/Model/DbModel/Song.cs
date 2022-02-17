@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +20,7 @@ public class Song
     /// <summary>
     ///     Full url to song cover.
     /// </summary>
-    public string Cover { get; set; }
+    public string? Cover { get; set; }
 
     /// <summary>
     ///     Length of song.
@@ -38,32 +36,32 @@ public class Song
     /// <summary>
     ///     Title of song.
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     /// <summary>
     ///     Title in original language.
     /// </summary>
-    public string OriginalTitle { get; set; }
+    public string? OriginalTitle { get; set; }
 
     /// <summary>
     ///     Artist of song.
     /// </summary>
-    public string Artist { get; set; }
+    public string? Artist { get; set; }
 
     /// <summary>
     ///     Artist in original language.
     /// </summary>
-    public string OriginalArtist { get; set; }
+    public string? OriginalArtist { get; set; }
 
     /// <summary>
     ///     Use to search.
     /// </summary>
-    public string SearchString { get; set; }
+    public string? SearchString { get; set; }
 
     /// <summary>
     ///     Use to search in original language.
     /// </summary>
-    public string OriginalSearchString { get; set; }
+    public string? OriginalSearchString { get; set; }
 
     /// <summary>
     ///     Mode bitmask of song.

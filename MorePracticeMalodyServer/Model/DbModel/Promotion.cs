@@ -13,5 +13,5 @@ public class Promotion
     /// <summary>
     ///     Promoted song.
     /// </summary>
-    public Song Song { get; set; }
+    public Song? Song { get; set; }
 }

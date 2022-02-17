@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MorePracticeMalodyServer.Data;
 
@@ -10,9 +11,10 @@ using MorePracticeMalodyServer.Data;
 namespace MorePracticeMalodyServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220217093526_Add-Sponsor-Column")]
+    partial class AddSponsorColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
@@ -24,6 +26,7 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Creator")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Length")
@@ -48,6 +51,7 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Version")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ChartId");
@@ -73,13 +77,16 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("File")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Hash")
+                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -99,15 +106,18 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Cover")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("End")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Sponsor")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Start")
@@ -126,7 +136,7 @@ namespace MorePracticeMalodyServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ChartId")
+                    b.Property<int>("ChartId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("EventId")
@@ -147,7 +157,7 @@ namespace MorePracticeMalodyServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SongId")
+                    b.Property<int>("SongId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -164,12 +174,14 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Artist")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Bpm")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Cover")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Length")
@@ -179,21 +191,26 @@ namespace MorePracticeMalodyServer.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OriginalArtist")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OriginalSearchString")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OriginalTitle")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SearchString")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("SongId");
@@ -233,7 +250,9 @@ namespace MorePracticeMalodyServer.Migrations
                 {
                     b.HasOne("MorePracticeMalodyServer.Model.DbModel.Chart", "Chart")
                         .WithMany()
-                        .HasForeignKey("ChartId");
+                        .HasForeignKey("ChartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MorePracticeMalodyServer.Model.DbModel.Event", null)
                         .WithMany("EventCharts")
@@ -246,7 +265,9 @@ namespace MorePracticeMalodyServer.Migrations
                 {
                     b.HasOne("MorePracticeMalodyServer.Model.DbModel.Song", "Song")
                         .WithMany()
-                        .HasForeignKey("SongId");
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Song");
                 });

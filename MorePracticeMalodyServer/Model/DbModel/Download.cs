@@ -18,25 +18,25 @@ public class Download // Unknown types are begin with '¿'.
     /// <summary>
     ///     Downloading Chart Name.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     ///     Downloading File Hash. Used to check integrity.
     /// </summary>
     [MaxLength(32)]
-    public string Hash { get; set; }
+    public string? Hash { get; set; }
 
     /// <summary>
     ///     File url.
     /// </summary>
-    public string File { get; set; }
+    public string? File { get; set; }
 
     /// <summary>
     ///     Navigation to <see cref="DbModel.Chart" />.
     /// </summary>
     [ForeignKey(nameof(ChartId))]
     [InverseProperty(nameof(DbModel.Chart.Downloads))]
-    public Chart Chart { get; set; }
+    public Chart? Chart { get; set; }
 
     /// <summary>
     ///     FK

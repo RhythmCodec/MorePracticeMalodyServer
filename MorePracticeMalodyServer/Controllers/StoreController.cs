@@ -73,7 +73,7 @@ public class StoreController : ControllerBase
 
         // TODO: 缓存歌曲列表。
         // TODO: 过滤搜索关键字。可能使用某些字符标明全局歌曲列表缓存。
-        if (word is null) // If word is null, Query all songs.
+        if (string.IsNullOrWhiteSpace(word)) // If word is null, Query all songs.
         {
             var total = context.Songs.Count();
             if (total - from * Consts.MaxItem > Consts.MaxItem)

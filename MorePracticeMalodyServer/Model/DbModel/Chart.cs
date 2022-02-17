@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace MorePracticeMalodyServer.Model.DbModel;
@@ -25,12 +24,12 @@ public class Chart
     /// <summary>
     ///     Username of creator.
     /// </summary>
-    public string Creator { get; set; }
+    public string? Creator { get; set; }
 
     /// <summary>
     ///     Chart version.
     /// </summary>
-    public string Version { get; set; }
+    public string? Version { get; set; }
 
     /// <summary>
     ///     Chart difficulty.
@@ -62,7 +61,7 @@ public class Chart
     /// </summary>
     [ForeignKey(nameof(SongId))]
     [InverseProperty(nameof(DbModel.Song.Charts))]
-    public Song Song { get; set; }
+    public Song? Song { get; set; }
 
     /// <summary>
     ///     FK
