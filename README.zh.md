@@ -2,22 +2,21 @@
 
 <p>
 状态：
-<div>master
+master
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Amaster">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=master">
 </a>
-</div>
-<div>dev
+&nbsp dev
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Adev">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=dev">
 </a>
-</div>
+
 </p>
 
 ## 基本
 
-API版本：**202103**  
-程序版本：**1.0.3**
+API版本：**202112**  
+程序版本：**1.1.0**  
 程序运行时：**ASP.NET Core**
 
 开源的 Malody V 谱面(Chart)服务器。~~低负载基本能用，高负载肯定完蛋~~。  
@@ -36,15 +35,16 @@ API版本：**202103**
 
 **目前已知有bug的功能：**
 * 一切正常 :)
+* 1.1.0目前没有完全测试
 
 **目前未实现的功能：**
-* 支持 202108 API版本
+* 202112的皮肤列表与下载
 
 **将在未来添加的功能：**
 * 上传身份限制
 * 用户身份限制
 * 第三方存储提供
-* 支持 202108 API版本
+* 皮肤列表与下载
 * 支持 docker
 * 前端管理界面
 
@@ -61,7 +61,7 @@ API版本：**202103**
  
 **从源代码编译：**  
 1. 克隆或下载MorePracticeMalodyServer仓库。
-2. 确保已经安装.NET 5 SDK。您可以[从此下载](https://dotnet.microsoft.com/download/dotnet/5.0)。关于如何安装.NET 5 SDK，您可以[阅读此文章](https://docs.microsoft.com/en-us/dotnet/core/install/)。
+2. 确保已经安装.NET 6 SDK。您可以[从此下载](https://dotnet.microsoft.com/download/dotnet/6.0)。关于如何安装.NET 6 SDK，您可以[阅读此文章](https://docs.microsoft.com/en-us/dotnet/core/install/)。
 3. 运行`dotnet restore`。
 4. 默认使用sqlite提供数据库，本地文件系统提供存储。若要使用其他提供程序，请参考[修改配置](#修改配置)章节。
 5. 若切换了数据库提供程序，请先删除 MorePracticeMalodyServer\Migrations 文件夹内所有内容。之后运行`dotnet ef migrations add InitialCreate`，执行完成后运行`dotnet ef database update`来更新数据库。对于生产数据库，建议运行`dotnet ef migrations script --idempotent`生成SQL脚本，在数据库上运行该脚本以构建数据表。
@@ -83,6 +83,7 @@ API版本：**202103**
     * ServerVersion : MySql使用，确定服务器版本。
   * Storage : 存储提供程序相关配置
     * Provider : 存储提供程序的链接，self时为自提供。有关如何扩展存储提供，请参考[自定义存储提供](#自定义存储提供)章节。
+  * CheckUid : 如果是202112以上，则可对UID进行验证。true开启，false关闭。
 
 ## 修改数据库提供程序的注意事项
 
@@ -93,8 +94,8 @@ API版本：**202103**
 ## 自定义存储提供
 
 **此部分目前尚未实现！**  
-请将Storage:Provider设置为您的文件提供程序的上传接口。  
-上传完成后请调用服务器回调通知服务器文件的链接。（**此回调尚未实现**）  
+由于各种网络存储供应商提供的访问方式不同，因此此部分需要根据需求进行开发。如果需要对某个提供商进行支持，请[提交Issue](https://github.com/RhythmCodec/MorePracticeMalodyServer/issues/new/choose)。
+请将Storage:Provider设置为受支持的选项。目前仅支持`self`。  
 游戏使用application/x-www-form-urlencoded传送文件，每次只会发送一个文件，同时附带额外的meta信息。
 meta信息为文本键值对。在程序中，我们提供了文件的cid，sid，hash数据，您可以在表单中检索。  
 由于文件在您的提供程序上保存，服务器不会尝试下载您的文件进行解析。您需要自行解析谱面文件(chart file | *.mc)的元数据。
@@ -103,7 +104,7 @@ meta信息为文本键值对。在程序中，我们提供了文件的cid，sid�
 ## docker支持
 
 程序支持在 docker 上运行。目前没有打包 docker 镜像，但是提供了 dockerfile ，因此需要您自行运行`docker build`进行构建。  
-在 docker 上运行的服务器不支持使用本地文件系统，也不支持使用sqlite。请替换数据库提供程序与存储提供程序。关于如何替换数据库提供程序与文件提供程序，请[参考上文](#修改数据库提供程序的注意事项)。
+在 docker 上运行的服务器时，如果使用本地文件系统存储，同时需要持久化数据，请映射`/wwwroot`文件夹与`data.sqlite`。他们均位于程序根目录。
 
 ## 许可
 
