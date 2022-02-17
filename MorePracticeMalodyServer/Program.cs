@@ -1,18 +1,6 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using MorePracticeMalodyServer;
 
-namespace MorePracticeMalodyServer;
-
-public class Program
-{
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
-}
+Host.CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+    .Build()
+    .Run();
