@@ -20,15 +20,10 @@
  * 
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
 using MorePracticeMalodyServer.Data.Helper;
 using MorePracticeMalodyServer.Model;
@@ -71,12 +66,9 @@ public class StoreController : ControllerBase
     /// <returns>A warped json list of song infos.</returns>
     [Route("list")]
     [HttpGet]
-    public async Task<Response<SongInfo>> GetList(int uid, int api, string word, int org, int mode, int lvge,
+    public async Task<Response<SongInfo>> GetList(int uid, string word, int org, int mode, int lvge,
         int lvle, int beta, int from)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var resp = new Response<SongInfo>();
 
         // TODO: 缓存歌曲列表。
@@ -184,11 +176,8 @@ public class StoreController : ControllerBase
     /// <returns>A warped json list of song infos.</returns>
     [Route("promote")]
     [HttpGet]
-    public async Task<Response<SongInfo>> GetPromote(int uid, int api, int org, int mode, int from)
+    public async Task<Response<SongInfo>> GetPromote(int uid, int org, int mode, int from)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var resp = new Response<SongInfo>();
 
         // Query promotes from database.
@@ -257,12 +246,9 @@ public class StoreController : ControllerBase
     /// <returns name="resp">Response a chart info</returns>
     [Route("charts")]
     [HttpGet]
-    public async Task<Response<ChartInfo>> GetChart(int uid, int api, int sid, int beta, int mode, int from,
+    public async Task<Response<ChartInfo>> GetChart(int uid, int sid, int beta, int mode, int from,
         int promote)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var resp = new Response<ChartInfo>();
 
         // Try to find song with correct id.
@@ -311,11 +297,8 @@ public class StoreController : ControllerBase
     /// <returns name="resp">Response a song info</returns>
     [Route("query")]
     [HttpGet]
-    public async Task<Response<SongInfo>> QuerySong(int uid, int api, int sid = -1, int cid = -1, int org = 0)
+    public async Task<Response<SongInfo>> QuerySong(int uid, int sid = -1, int cid = -1, int org = 0)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         // If not providing a valid SID or CID, throw a exception.
         if (sid == -1 && cid == -1)
         {
@@ -384,11 +367,8 @@ public class StoreController : ControllerBase
     /// <returns name="resp">Response a download link</returns>
     [Route("download")]
     [HttpGet]
-    public async Task<DownloadResponse> GetDownload(int uid, int api, int cid)
+    public async Task<DownloadResponse> GetDownload(int uid, int cid)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var resp = new DownloadResponse();
         Chart chart = null;
 
@@ -438,11 +418,8 @@ public class StoreController : ControllerBase
     /// <returns name="resp">return a EventInfo Response</returns>
     [Route("events")]
     [HttpGet]
-    public async Task<Response<EventInfo>> GetEvents(int uid, int api, int active, int from)
+    public async Task<Response<EventInfo>> GetEvents(int uid, int active, int from)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var resp = new Response<EventInfo>();
 
         try
@@ -496,11 +473,8 @@ public class StoreController : ControllerBase
     /// <returns name="resp">Return EventChartInfo Response</returns>
     [Route("event")]
     [HttpGet]
-    public async Task<Response<EventChartInfo>> GetEvent(int uid, int api, int eid, int org, int from)
+    public async Task<Response<EventChartInfo>> GetEvent(int uid, int eid, int org, int from)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         var maxItem = 50; // Max item server will return.
         var resp = new Response<EventChartInfo>();
 

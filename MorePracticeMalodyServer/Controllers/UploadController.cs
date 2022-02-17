@@ -72,12 +72,9 @@ public class UploadController : ControllerBase
     /// <returns></returns>
     [Route("sign")]
     [HttpPost]
-    public async Task<SignResponse> PostSign(int uid, int api, [FromForm] int sid, [FromForm] int cid,
+    public async Task<SignResponse> PostSign(int uid, [FromForm] int sid, [FromForm] int cid,
         [FromForm] string name, [FromForm] string hash)
     {
-        // If not support the api version, throw a exception.
-        Util.CheckVersion(api);
-
         logger.LogInformation("Upload sign phase!");
         logger.LogInformation("User {uid} trying to upload chart {cid} for song {sid}.", uid, cid, sid);
 
@@ -147,12 +144,10 @@ public class UploadController : ControllerBase
     /// <returns>Response Code</returns>
     [HttpPost]
     [Route("finish")]
-    public async Task<object> FinishCheck(int uid, int api, [FromForm] int sid, [FromForm] int cid,
+    public async Task<object> FinishCheck(int uid, [FromForm] int sid, [FromForm] int cid,
         [FromForm] string name, [FromForm] string hash, [FromForm] int size,
         [FromForm] string main)
     {
-        Util.CheckVersion(api);
-
         var selfProvide = true;
 
         // Check if chart exist.

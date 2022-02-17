@@ -1,13 +1,7 @@
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MorePracticeMalodyServer.Data;
+using MorePracticeMalodyServer.Middleware.Verification;
 using MorePracticeMalodyServer.StorageProvider;
 
 namespace MorePracticeMalodyServer;
@@ -82,6 +76,8 @@ public class Startup
         app.UseRouting();
 
         app.UseAuthorization();
+
+        app.UseVerification(); // Verify api version, key & uid.
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }

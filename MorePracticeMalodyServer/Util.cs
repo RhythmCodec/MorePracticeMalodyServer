@@ -1,16 +1,7 @@
-﻿using System;
-using System.Linq;
-
-namespace MorePracticeMalodyServer;
+﻿namespace MorePracticeMalodyServer;
 
 public class Util
 {
-    public static void CheckVersion(int version)
-    {
-        if (version > Consts.API_VERSION || version < Consts.MIN_SUPPORT)
-            throw new NotSupportedException($"This server does not support api version {version}.");
-    }
-
     public static bool IsCharacter(char c)
     {
         //              Japanese character               All Chinese character
