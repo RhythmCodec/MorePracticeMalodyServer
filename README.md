@@ -2,26 +2,26 @@
 
 <p>
 State:
-<div>master
+master
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Amaster">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=master">
 </a>
-</div>
-<div>dev
+
+&nbsp; dev
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Adev">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=dev">
 </a>
-</div>
+
 </p>
 
 ## Basic
 
-API version：**202103**  
-Application version：**1.0.3**  
+API version：**202112**  
+Application version：**1.1.0**  
 Runtime：**ASP.NET Core**
 
 An open-source Malody V Chart Server. ~Can be run on low loads, but surely booms at high loads.~  
-You can use it as you download, no need configuration, and it can run the server using sqlite and local file system.
+You can use it immediately as you download, no more configuration, while it can be directly run on the server using sqlite and local file system.
 
 ## Features
 
@@ -35,17 +35,18 @@ You can use it as you download, no need configuration, and it can run the server
 * Supports MySql/SQLServer/sqlite
 
 **Currently Known Bugs:**
-* All right :)
+* All right :) EXCEPT 1.1.0 :(
+* Ver 1.1.0 is not fully tested.
 
 
 **Features Under Construction：**
-* Supports api version 202108
+* Skin list and downloading in API ver 202112
 
 **Will be Added：**
 * Upload identity restructions
 * User identity restructions
 * Save on third-party device or website
-* Supports api version 202108
+* Skin list and downloading
 * Supports docker
 * Frontend management page
 
@@ -62,9 +63,9 @@ You can install it in two ways: **binary** or **compile from source code**.
  
 **Compile from Source Code：**  
 1. Clone or download MorePracticeMalodyServer repo.
-2. Make sure you have installed .NET 5 SDK. You can [download from here](https://dotnet.microsoft.com/download/dotnet/5.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 5 SDK.
+2. Make sure you have installed .NET 6 SDK. You can [download from here](https://dotnet.microsoft.com/download/dotnet/5.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 6 SDK.
 3. Run `dotnet restore`.
-4. Uses sqlite as database and local filesystem as storage by default. If using other providers, please refer to [Modifying the profile](#Modifying the profile).
+4. Program will use sqlite as default database and local filesystem as default storage. If you are using other providers, please refer to [Modifying the profile](#Modifying the profile).
 5. As the database provider changing, Please delete ALL THINGS under MorePracticeMalodyServer\Migrations, then run `dotnet ef migrations add InitialCreate` and `dotnet ef database update` to update it. For production environment databases, `dotnet ef migrations script --idempotent` is promoted, while generates the SQL script to construct the data table.
 6. Run `dotnet build --configuration Release --no-restore` to build.
 7. Copy bulit files at MorePracticeMalodyServer\bin\Release. 
@@ -94,17 +95,17 @@ Now only sqlite is tested, as a result, other providers may behave unpredictably
 ## Custom Storage Provisioning
 
 **This is now under construction!**  
-Please set Storage:Provider as the upload interface for your file provider.
-Callback the server with the file link after the upload is complete.(**This callback is under construction**)  
-Games use application/x-www-form-urlencoded to send file. Only one file with meta info is sent at a time.
-meta info is text key-value. We provides the cid, sid and hash. It can be retrieved in the form.
+As there are lots of ways of accessing the web storage provided by various providers, this part will be developed according to the needs. If you need a support for a provider, please [submit issue](https://github.com/RhythmCodec/MorePracticeMalodyServer/issues/new/choose).
+Please set Storage:Provider as supported options. Currently we only support `self`.
+Games use application/x-www-form-urlencoded to send files. Only one file with metadata is sent at a time.
+Metadata is text key-value. We provide the cid, sid and hash. It can be retrieved in the form.
 As the files are saved on your storage provider, the server won't try to download your files to analyze. You need to parse the metadata of chart files | *.mc.
-After parsing, call server api to upload it(**This Api is under construstion**).
+After parsing, please call server api to upload it(**This Api is under construstion**).
 
 ## Docker support
 
-Application can be run on docker. Although docker images are not currently packaged, there is dockerfile, so you need to run `docker build`.  
-Servers running on docker don't support neither local filesystem nor sqlite. Please replace the database provider with the storage provider. About how to do this, [refer to this]('#Notes for Modifying the Database Provider').
+Application can be run on Docker. Although docker images are not currently packaged, there is dockerfile, so you need to run `docker build`.  
+When run server on Docker, please map the directory `/wwwroot` and `data.sqlite` if you need local filesystem as storage and persist data. These directorys are all in program's root.
 
 ## License
 
