@@ -6,7 +6,7 @@ master
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Amaster">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=master">
 </a>
-&nbsp dev
+&nbsp; dev
 <a href="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml?query=branch%3Adev">
 <img src="https://github.com/RhythmCodec/MorePracticeMalodyServer/actions/workflows/build.yml/badge.svg?branch=dev">
 </a>
@@ -104,7 +104,7 @@ meta信息为文本键值对。在程序中，我们提供了文件的cid，sid�
 ## docker支持
 
 程序支持在 docker 上运行。目前没有打包 docker 镜像，但是提供了 dockerfile ，因此需要您自行运行`docker build`进行构建。  
-在 docker 上运行的服务器时，如果使用本地文件系统存储，同时需要持久化数据，请映射`/wwwroot`文件夹与`data.sqlite`。他们均位于程序根目录。
+在 docker 上运行服务器时，如果使用本地文件系统存储，同时需要持久化数据，请映射`/wwwroot`文件夹与`data.sqlite`。他们均位于程序根目录。
 
 ## 许可
 
