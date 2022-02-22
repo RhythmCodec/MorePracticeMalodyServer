@@ -63,7 +63,7 @@ You can install it in two ways: **binary** or **compile from source code**.
  
 **Compile from Source Code：**  
 1. Clone or download MorePracticeMalodyServer repo.
-2. Make sure you have installed .NET 6 SDK. You can [download from here](https://dotnet.microsoft.com/download/dotnet/5.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 6 SDK.
+2. Make sure you have installed .NET 6 SDK. You can [download from here](https://dotnet.microsoft.com/download/dotnet/6.0). You can [read this](https://docs.microsoft.com/en-us/dotnet/core/install/) to get the way about installing .NET 6 SDK.
 3. Run `dotnet restore`.
 4. Program will use sqlite as default database and local filesystem as default storage. If you are using other providers, please refer to [Modifying the profile](#Modifying the profile).
 5. As the database provider changing, Please delete ALL THINGS under MorePracticeMalodyServer\Migrations, then run `dotnet ef migrations add InitialCreate` and `dotnet ef database update` to update it. For production environment databases, `dotnet ef migrations script --idempotent` is promoted, while generates the SQL script to construct the data table.
