@@ -85,6 +85,7 @@ Profile: appsettings.json. The following are the structure and modify ways:
     * ServerVersion : Used by MySql, define version.
   * Storage : setup storage
     * Provider : The storage provider link. Local storage is `self`. For information on how to extend storage provisioning, refer to the section on [custom storage provisioning](#Custom Storage Provisioning).
+  * CheckUid : If client use api version 202112, server can check uid validation. Set to `true` to enable and `false` to disable.
 
 ## Notes for Modifying the Database Provider
 
@@ -95,7 +96,7 @@ Now only sqlite is tested, as a result, other providers may behave unpredictably
 ## Custom Storage Provisioning
 
 **This is now under construction!**  
-As there are lots of ways of accessing the web storage provided by various providers, this part will be developed according to the needs. If you need a support for a provider, please [submit issue](https://github.com/RhythmCodec/MorePracticeMalodyServer/issues/new/choose).
+As there are lots of ways of accessing the web storage provided by various providers, this part will be developed according to the needs. If you need a support for a provider, please [open issue](https://github.com/RhythmCodec/MorePracticeMalodyServer/issues/new/choose).
 Please set Storage:Provider as supported options. Currently we only support `self`.
 Games use application/x-www-form-urlencoded to send files. Only one file with metadata is sent at a time.
 Metadata is text key-value. We provide the cid, sid and hash. It can be retrieved in the form.
